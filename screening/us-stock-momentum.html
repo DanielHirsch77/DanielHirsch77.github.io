@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>US Stock Momentum</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: sans-serif; background: #131722; display: flex; flex-direction: column; height: 100vh; }
+  #tab-bar { display: flex; background: #1e222d; border-bottom: 1px solid #434651; flex-shrink: 0; }
+  .tab { background: none; border: none; color: #787b86; font-size: 13px; font-weight: 600; padding: 10px 22px; cursor: pointer; border-bottom: 2px solid transparent; }
+  .tab:hover { color: #d1d4dc; }
+  .tab.active { color: #d1d4dc; border-bottom-color: #2962ff; }
+  iframe { flex: 1; border: none; width: 100%; }
+</style>
+</head>
+<body>
+<div id="tab-bar">
+    <button id="tab0" class="tab active" onclick="show(0)">Nasdaq-100</button>
+</div>
+  <iframe id="fr0" src="us-stock-momentum-nasdaq-100.html" ></iframe>
+<script>
+function show(n) {
+  document.querySelectorAll('.tab').forEach((b,i) => b.classList.toggle('active', i===n));
+  document.querySelectorAll('iframe').forEach((f,i) => f.style.display = i===n ? '' : 'none');
+}
+</script>
+</body>
+</html>

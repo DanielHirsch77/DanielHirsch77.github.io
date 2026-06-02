@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>False Breakout Long – 2026-06-01</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0f3fa; color: #131722; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  #sidebar { width: 160px; background: #1e222d; border-right: 1px solid #2a2e39; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+  #sidebar h2 { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #787b86; padding: 14px 12px 8px; border-bottom: 1px solid #2a2e39; }
+  .tbtn { display: block; width: 100%; padding: 9px 12px; font-size: 13px; font-weight: 600; text-align: left; background: transparent; color: #d1d4dc; border: none; border-bottom: 1px solid #2a2e39; cursor: pointer; transition: background .1s; }
+  .tbtn:hover { background: #2a2e39; }
+  .tbtn.active { background: #1f2d5c; color: #5b9cf6; border-left: 3px solid #2962ff; }
+  #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #hdr { padding: 8px 16px; font-size: 15px; font-weight: 700; border-bottom: 1px solid #d1d4dc; background: #ffffff; display: flex; align-items: center; gap: 12px; }
+  #hdr .sub { font-size: 11px; font-weight: 400; color: #787b86; }
+  #chart { flex: 1; background: #ffffff; }
+  #info-bar { padding: 5px 16px; background: #f8f9fd; border-bottom: 1px solid #e0e3eb; font-size: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; min-height: 30px; }
+  .ib-name { font-weight: 600; color: #131722; }
+  .ib-sep { color: #d1d4dc; user-select: none; }
+  .ib-lbl { color: #787b86; }
+  .ib-val { color: #131722; font-weight: 500; }
+  .ib-pos { color: #26a69a; font-weight: 600; }
+  .ib-neg { color: #ef5350; font-weight: 600; }
+  .ib-badge { background: #2962ff; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+  .ib-badge-e { background: #f9a825; color: #131722; }
+  #summary-panel { flex: 1; display: none; background: #ffffff; padding: 20px 24px; overflow-y: auto; font-family: 'Consolas','Monaco','Courier New',monospace; font-size: 12px; line-height: 1.7; color: #131722; white-space: pre; }
+  .tbtn-sep { height: 1px; background: #434651; margin: 4px 0; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <h2>False Breakout Long</h2>
+</div>
+<div id="main">
+  <div id="hdr">
+    <span id="chart-label">–</span>
+    <span class="sub">D1</span>
+    <span class="sub">2026-06-01</span>
+  </div>
+  <div id="info-bar"></div>
+  <div id="chart"></div>
+  <div id="summary-panel"></div>
+</div>
+<script>
+const DATA = {"TXN": {"dates": ["2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-12", "2026-02-13", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15"], "open": [195.0296, 193.5073, 191.0855, 192.4496, 201.5141, 213.9098, 214.9677, 214.3509, 223.1064, 221.0071, 220.5295, 224.4894, 220.1414, 215.7338, 222.002, 225.534, 220.5494, 225.3848, 228.7179, 220.032, 215.6443, 217.7934, 219.6042, 213.3161, 213.3659, 210.1621, 209.9731, 204.8492, 203.3269, 199.8943, 191.5268, 191.7756, 194.651, 197.5761, 192.671, 190.5021, 193.3376, 194.8798, 193.457, 186.8208, 187.567, 193.6162, 186.0049, 196.5215, 195.1087, 190.7408, 190.6413, 189.3181, 193.2978, 191.4075, 195.9941, 197.5064, 205.6053, 211.4954, 215.2861, 212.8684, 216.092, 216.4601, 215.6244, 227.1061, 231.3943, 233.3145, 235.2149, 258.994, 286.3749, 274.7739, 266.1377, 268.2669, 268.8639, 278.684, 282.2558, 280.5, 279.05, 286.29, 292.49, 291.29, 296.24, 302.74, 306.67, 302.69, 308.55, 292.61, 305.22, 300.89, 305.4, 318.43, 331.45, 320.16, 316.48, 297.382, null, null, null, null, null, null, null, null, null, null], "high": [197.135, 194.1498, 194.5749, 196.1268, 214.0976, 219.4453, 215.3657, 224.1212, 227.6732, 227.1359, 224.6784, 225.6136, 221.0369, 220.9573, 230.1506, 228.3398, 225.743, 227.2951, 228.8373, 220.9175, 219.0868, 221.6637, 223.0367, 214.8085, 214.9976, 211.5551, 210.4009, 205.5257, 204.2721, 200.9191, 194.0639, 196.1633, 199.168, 200.4117, 193.7754, 192.7705, 195.2678, 195.437, 194.5515, 189.0395, 189.3678, 193.9844, 195.4071, 197.9641, 196.0738, 191.9945, 191.7358, 193.5764, 196.2628, 195.0788, 198.5511, 199.367, 208.7991, 214.8384, 216.2214, 216.102, 218.3804, 217.2064, 222.8875, 229.3646, 232.7872, 234.8069, 237.5928, 282.6837, 286.3749, 275.6195, 269.3216, 271.0627, 280.4948, 280.445, 282.3553, 282.5, 292.64, 287.66, 292.5, 298.18, 296.3, 309.32, 310.29, 307.56, 309.19, 305.5, 305.74, 303.07, 315.57, 326.42, 331.51, 321.29, 319.0, 302.0, null, null, null, null, null, null, null, null, null, null], "low": [191.4512, 188.9306, 190.2255, 192.1036, 201.3757, 212.348, 211.9829, 213.7539, 221.5742, 217.5546, 217.7934, 217.4849, 217.1367, 215.0374, 222.002, 220.7484, 220.42, 221.6836, 220.2409, 216.3209, 215.4354, 217.7934, 208.5304, 209.1672, 209.0876, 207.1972, 206.262, 200.74, 200.4813, 193.7854, 190.1837, 188.7211, 194.4619, 196.4916, 188.7907, 189.1788, 191.4572, 192.7904, 189.0295, 183.9653, 184.9005, 187.4774, 186.0049, 194.5316, 191.9049, 188.3729, 184.015, 187.5172, 193.2978, 190.0344, 194.9096, 194.4719, 205.1178, 209.8139, 212.8386, 211.0377, 213.2664, 210.6298, 215.6244, 223.5342, 228.8572, 229.474, 233.3046, 257.9991, 270.6349, 266.277, 262.9042, 266.2074, 264.9936, 275.142, 275.2415, 275.58, 279.05, 281.0, 286.38, 289.0, 287.63, 301.92, 303.5, 297.8, 295.46, 291.95, 298.95, 294.78, 303.0, 315.35, 313.18, 313.11, 303.77, 289.97, null, null, null, null, null, null, null, null, null, null], "close": [192.7462, 191.0855, 194.3277, 194.3673, 213.6824, 216.4502, 214.4603, 223.8725, 224.0715, 221.7931, 222.8477, 220.3205, 217.664, 219.8032, 225.4147, 221.8727, 225.0167, 224.5491, 222.191, 216.9477, 218.6192, 218.7485, 212.2714, 212.8186, 211.5551, 211.0377, 208.7593, 201.6454, 201.3668, 196.9791, 192.2531, 195.2081, 196.4618, 197.6656, 189.0892, 189.8155, 193.1486, 193.467, 189.8155, 187.3381, 186.2437, 187.6764, 193.6461, 195.7753, 192.4323, 189.3678, 185.4776, 193.1586, 195.3076, 193.8849, 198.4118, 198.7302, 207.8439, 213.8932, 213.6445, 215.6145, 217.7635, 215.1966, 221.9722, 228.6582, 232.5186, 231.9713, 235.1154, 280.8032, 275.739, 268.1376, 263.6603, 267.859, 279.659, 279.5993, 279.47, 281.0, 289.44, 285.24, 287.8, 297.76, 295.17, 306.34, 308.17, 302.73, 300.6, 302.31, 304.88, 298.39, 309.21, 324.89, 317.45, 315.95, 305.68, 293.2, null, null, null, null, null, null, null, null, null, null], "volume": [7264000, 6691300, 9169300, 10748800, 19603400, 14120000, 9086800, 11194900, 15207600, 14542500, 11044200, 9397500, 9246700, 5101000, 9132600, 8474700, 5011900, 5454800, 6667800, 5002200, 5457500, 7877400, 9494300, 6997300, 6041500, 8275100, 6811300, 7496500, 5451500, 8051800, 7220500, 7597500, 5929200, 4995200, 8156800, 3688400, 4754900, 3385200, 5069200, 5868100, 15025200, 7452800, 7015200, 4505800, 6314400, 5792700, 6024700, 7277900, 5432000, 3408100, 4235600, 4659000, 7454600, 5499100, 4268000, 4630500, 5495200, 4459600, 6709000, 7091700, 6123300, 6833300, 11463100, 25659100, 13943600, 9962700, 8369400, 7821400, 11066700, 4494300, 5525700, 7295200, 10183200, 7017900, 8881500, 9347300, 6431000, 7546500, 5767800, 6661600, 6513100, 7296900, 7660700, 5663700, 7129100, 8480000, 6740600, 5884400, 16785100, 9526725, null, null, null, null, null, null, null, null, null, null], "ema9": [192.7462, 192.414, 192.7968, 193.1109, 197.2252, 201.0702, 203.7482, 207.7731, 211.0327, 213.1848, 215.1174, 216.158, 216.4592, 217.128, 218.7853, 219.4028, 220.5256, 221.3303, 221.5024, 220.5915, 220.197, 219.9073, 218.3801, 217.2678, 216.1253, 215.1078, 213.8381, 211.3995, 209.393, 206.9102, 203.9788, 202.2247, 201.0721, 200.3908, 198.1305, 196.4675, 195.8037, 195.3364, 194.2322, 192.8534, 191.5314, 190.7604, 191.3376, 192.2251, 192.2665, 191.6868, 190.4449, 190.9877, 191.8517, 192.2583, 193.489, 194.5373, 197.1986, 200.5375, 203.1589, 205.65, 208.0727, 209.4975, 211.9924, 215.3256, 218.7642, 221.4056, 224.1476, 235.4787, 243.5307, 248.4521, 251.4938, 254.7668, 259.7453, 263.7161, 266.8669, 269.6935, 273.6428, 275.9622, 278.3298, 282.2158, 284.8067, 289.1133, 292.9247, 294.8857, 296.0286, 297.2849, 298.8039, 298.7211, 300.8189, 305.6331, 307.9965, 309.5872, 308.8058, 305.6846, null, null, null, null, null, null, null, null, null, null], "ema20": [192.7462, 192.588, 192.7537, 192.9074, 194.8859, 196.9397, 198.6083, 201.0144, 203.2103, 204.9801, 206.6818, 207.9807, 208.9029, 209.9411, 211.4147, 212.4107, 213.6113, 214.653, 215.3709, 215.5211, 215.8161, 216.0954, 215.7312, 215.4538, 215.0825, 214.6973, 214.1318, 212.9426, 211.8401, 210.4248, 208.6942, 207.4098, 206.3671, 205.5384, 203.9718, 202.6236, 201.7212, 200.9351, 199.8761, 198.682, 197.4974, 196.5621, 196.2844, 196.2359, 195.8736, 195.254, 194.3229, 194.212, 194.3164, 194.2753, 194.6692, 195.056, 196.2739, 197.9519, 199.4465, 200.9863, 202.5841, 203.7853, 205.5174, 207.7213, 210.0829, 212.1675, 214.353, 220.6816, 225.9252, 229.9454, 233.1563, 236.4614, 240.5754, 244.292, 247.6423, 250.8192, 254.4974, 257.4252, 260.3181, 263.884, 266.8636, 270.6233, 274.1991, 276.9164, 279.1719, 281.3756, 283.6141, 285.0213, 287.325, 290.9026, 293.4309, 295.5756, 296.5379, 296.22, null, null, null, null, null, null, null, null, null, null], "ema50": [192.7462, 192.681, 192.7456, 192.8092, 193.6278, 194.5228, 195.3046, 196.4249, 197.5091, 198.4614, 199.4177, 200.2375, 200.9209, 201.6613, 202.5928, 203.3489, 204.1986, 204.9967, 205.671, 206.1132, 206.6036, 207.0799, 207.2835, 207.5006, 207.6596, 207.792, 207.83, 207.5874, 207.3435, 206.937, 206.3612, 205.9238, 205.5528, 205.2435, 204.61, 204.0298, 203.6031, 203.2056, 202.6805, 202.0788, 201.4578, 200.9174, 200.6322, 200.4418, 200.1277, 199.7057, 199.1478, 198.9129, 198.7715, 198.5799, 198.5733, 198.5794, 198.9427, 199.529, 200.0826, 200.6917, 201.3612, 201.9037, 202.6907, 203.7091, 204.8388, 205.9029, 207.0484, 209.9408, 212.5211, 214.7021, 216.6221, 218.6314, 221.0246, 223.3217, 225.5236, 227.6991, 230.1203, 232.2819, 234.4591, 236.9414, 239.2249, 241.8569, 244.4574, 246.7426, 248.8546, 250.9509, 253.0658, 254.8432, 256.9753, 259.6386, 261.9057, 264.0251, 265.6586, 266.7387, null, null, null, null, null, null, null, null, null, null], "ema200": [192.7462, 192.7296, 192.7455, 192.7617, 192.9698, 193.2035, 193.415, 193.718, 194.0201, 194.2964, 194.5805, 194.8366, 195.0638, 195.3099, 195.6095, 195.8708, 196.1608, 196.4433, 196.6995, 196.901, 197.1171, 197.3323, 197.4809, 197.6336, 197.7721, 197.9041, 198.0121, 198.0482, 198.0813, 198.0703, 198.0124, 197.9845, 197.9694, 197.9663, 197.878, 197.7978, 197.7515, 197.7089, 197.6303, 197.5279, 197.4157, 197.3187, 197.2822, 197.2672, 197.2191, 197.141, 197.0249, 196.9865, 196.9697, 196.9391, 196.9537, 196.9714, 197.0796, 197.2469, 197.41, 197.5912, 197.7919, 197.9651, 198.2039, 198.507, 198.8454, 199.175, 199.5326, 200.3413, 201.0915, 201.7586, 202.3746, 203.0262, 203.7887, 204.543, 205.2886, 206.0419, 206.8717, 207.6515, 208.449, 209.3377, 210.1917, 211.1484, 212.1138, 213.0155, 213.887, 214.7668, 215.6634, 216.4866, 217.4092, 218.4787, 219.4635, 220.4235, 221.2719, 221.9876, null, null, null, null, null, null, null, null, null, null], "earnings": ["2026-04-22", "2026-01-27"], "n_future": 10, "meta": {"name": "Texas Instruments", "gap": null, "rel_vol": null, "sector": "Technology", "notional": null, "tags": [], "signal": "", "higher_low": 291.95, "higher_low_date": "2026-05-19", "prior_breakouts": 0, "earnings_days": 57}}};
+const TICKERS = ["TXN"];
+const SUMMARY_TEXT = "False Breakout Long Screening\n\nS&P 500\nSymbol   Name                  Higher Low             Signal                 Note                     Earnings \nTXN      Texas Instruments     2026-05-19: 291.95     2026-06-01: 289.97                              57d      \n\nNasdaq-100\nSymbol   Name                  Higher Low             Signal                 Note                     Earnings \nTXN      Texas Instruments     2026-05-19: 291.95     2026-06-01: 289.97                              57d      \n\nList for TradingView\nTXN\n\nInformation Technology  TXN\nTechnology              TXN\n\nConditions:\n- Lookback window: 2025-12-01 \u2192 2026-06-01\n- Condition 1: Confirmed primary uptrend built from local extrema inside the window.\n  Each higher low is the absolute trough between two swing highs and only counts\n  if the pullback contains \u22652 correction candles (\u22483 sessions).\n  Only monotonic HL\u2192HH pairs are accepted.\n- Condition 2: The terminal session must stage the failed breakdown.\n  That last bar may dip \u22643% below the higher low but must close back above it the same day.\n";
+
+const sidebar = document.getElementById('sidebar');
+TICKERS.forEach((t, i) => {
+  const b = document.createElement('button');
+  b.className = 'tbtn';
+  b.textContent = t;
+  b.onclick = () => showChart(t);
+  sidebar.appendChild(b);
+  if (i === 0) b.classList.add('active');
+});
+if (SUMMARY_TEXT) {
+  const sep = document.createElement('div'); sep.className = 'tbtn-sep'; sidebar.appendChild(sep);
+  const sb = document.createElement('button'); sb.className = 'tbtn'; sb.id = 'btn-summary';
+  sb.innerHTML = 'Summary'; sb.onclick = showSummary; sidebar.appendChild(sb);
+  document.getElementById('summary-panel').innerHTML = formatSummary(SUMMARY_TEXT);
+}
+
+function formatSummary(text) {
+  return text.split('\n').map(function(line) {
+    line = line.replace(/\x1b\[[0-9;]*m/g, '');
+    const e = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if (!e.trim()) return '';
+    return e;
+  }).join('\n');
+}
+function showSummary() {
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
+  const sb = document.getElementById('btn-summary'); if (sb) sb.classList.add('active');
+  document.getElementById('info-bar').style.display = 'none';
+  document.getElementById('chart').style.display = 'none';
+  document.getElementById('summary-panel').style.display = 'block';
+  document.getElementById('chart-label').textContent = 'Summary';
+}
+
+function nearestDate(dates, target) {
+  if (dates.includes(target)) return target;
+  const t = new Date(target).getTime();
+  let best = null, bestDiff = Infinity;
+  dates.forEach(function(dd) {
+    const diff = Math.abs(new Date(dd).getTime() - t);
+    if (diff < bestDiff && diff <= 4 * 86400000) { bestDiff = diff; best = dd; }
+  });
+  return best;
+}
+
+function showChart(ticker) {
+  document.getElementById('info-bar').style.display = '';
+  document.getElementById('chart').style.display = '';
+  document.getElementById('summary-panel').style.display = 'none';
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.toggle('active', b.textContent === ticker));
+  document.getElementById('chart-label').textContent = ticker;
+  const m = (DATA[ticker] || {}).meta || {};
+  const ibParts = [];
+  if (m.name) ibParts.push('<span class="ib-name">' + m.name + '</span>');
+  if (m.gap != null) {
+    const cls = m.gap >= 0 ? 'ib-pos' : 'ib-neg';
+    ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Gap </span><span class="' + cls + '">' + (m.gap >= 0 ? '+' : '') + m.gap.toFixed(2) + '%</span>');
+  }
+  if (m.rel_vol != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">RelVol </span><span class="ib-val">' + m.rel_vol.toFixed(1) + 'x</span>');
+  if (m.signal) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Signal </span><span class="ib-val">' + m.signal + '</span>');
+  if (m.rank != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Rank </span><span class="ib-val">' + m.rank + '</span>');
+  if (m.beta != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Beta 3y </span><span class="ib-val">' + m.beta.toFixed(2) + '</span>');
+  if (m.ath_gap != null) { const ac = m.ath_gap >= 0 ? 'ib-pos' : 'ib-neg'; ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">3M ATH </span><span class="' + ac + '">' + (m.ath_gap >= 0 ? '+' : '') + m.ath_gap.toFixed(1) + '%</span>'); }
+  if (m.higher_low != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Higher Low </span><span class="ib-val">' + (m.higher_low_date ? m.higher_low_date + ' @ ' : '') + m.higher_low.toFixed(2) + '</span>');
+  if (m.prior_breakouts) ibParts.push('<span class="ib-sep">|</span><span class="ib-val">' + m.prior_breakouts + ' prior signal' + (m.prior_breakouts > 1 ? 's' : '') + '</span>');
+  if (m.earnings_days != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Earn </span><span class="ib-val">' + m.earnings_days + 'd</span>');
+  if (m.sector) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Sector </span><span class="ib-val">' + m.sector + '</span>');
+  if (m.notional != null) ibParts.push('<span class="ib-sep">|</span><span class="ib-lbl">Vol </span><span class="ib-val">$' + m.notional.toFixed(0) + 'M</span>');
+  if (m.tags && m.tags.length) m.tags.forEach(function(tag) {
+    ibParts.push('<span class="ib-badge' + (tag === 'E' ? ' ib-badge-e' : '') + '">' + tag + '</span>');
+  });
+  document.getElementById('info-bar').innerHTML = ibParts.join(' ');
+
+  const d = DATA[ticker];
+  const volColors = d.close.map((c, i) =>
+    (c != null && d.open[i] != null && c >= d.open[i]) ? 'rgba(38,166,154,0.5)' : 'rgba(239,83,80,0.5)');
+
+  const traces = [
+    {
+      type: 'candlestick',
+      x: d.dates, open: d.open, high: d.high, low: d.low, close: d.close,
+      increasing: { line: { color: '#26a69a' }, fillcolor: '#26a69a' },
+      decreasing: { line: { color: '#ef5350' }, fillcolor: '#ef5350' },
+      name: ticker, xaxis: 'x', yaxis: 'y', showlegend: false,
+    },
+    { type:'scatter', x:d.dates, y:d.ema9,   mode:'lines', line:{color:'#000000',width:1.2}, name:'EMA 9',   xaxis:'x', yaxis:'y' },
+    { type:'scatter', x:d.dates, y:d.ema20,  mode:'lines', line:{color:'#2196f3',width:1.3}, name:'EMA 20',  xaxis:'x', yaxis:'y' },
+    { type:'scatter', x:d.dates, y:d.ema50,  mode:'lines', line:{color:'#43a047',width:1.5}, name:'EMA 50',  xaxis:'x', yaxis:'y' },
+    { type:'scatter', x:d.dates, y:d.ema200, mode:'lines', line:{color:'#e53935',width:1.8}, name:'EMA 200', xaxis:'x', yaxis:'y' },
+    {
+      type: 'bar', x: d.dates, y: d.volume,
+      marker: { color: volColors },
+      name: 'Volume', xaxis: 'x', yaxis: 'y2', showlegend: false,
+    },
+  ];
+
+  const bm = d.meta || {};
+  const shapes = [];
+  const annotations = [];
+
+  // ── Today separator + future shading (TradingView style) ──────────
+  const nFuture = d.n_future || 0;
+  if (nFuture > 0 && d.dates.length > nFuture) {
+    const lastReal = d.dates[d.dates.length - nFuture - 1];
+    const firstFut = d.dates[d.dates.length - nFuture];
+    const lastDate = d.dates[d.dates.length - 1];
+    shapes.push({
+      type: 'line', x0: lastReal, x1: lastReal, y0: 0.28, y1: 1,
+      xref: 'x', yref: 'paper',
+      line: { color: '#9598a1', width: 1, dash: 'dot' },
+    });
+  }
+
+  // ── False-breakout higher-low reference line ─────────────────────
+  if (bm.higher_low != null) {
+    shapes.push({
+      type: 'line', x0: d.dates[0], x1: d.dates[d.dates.length - 1],
+      y0: bm.higher_low, y1: bm.higher_low,
+      xref: 'x', yref: 'y',
+      line: { color: '#2196f3', width: 1 },
+    });
+  }
+
+  // ── Earnings markers (TradingView style) ─────────────────────────
+  // Badge at bottom edge of price pane, no vertical line (like TradingView)
+  const todayStr = new Date().toISOString().split('T')[0];
+  (d.earnings || []).forEach(function(eDate) {
+    const xDate = nearestDate(d.dates, eDate);
+    if (!xDate) return;
+    const isFuture = eDate > todayStr;
+    const color = isFuture ? '#ff9800' : '#f9a825';
+    annotations.push({
+      x: xDate, y: 0, xref: 'x', yref: 'paper',
+      text: '<b>E</b>', showarrow: false,
+      font: { color: '#ffffff', size: 9, family: 'sans-serif' },
+      bgcolor: color, bordercolor: color, borderwidth: 0, borderpad: 2,
+      xanchor: 'center', yanchor: 'bottom',
+    });
+  });
+
+  // ── Meta label box left of last candle (Gap, RelVol, tags) ─────────
+  const nf3 = d.n_future || 0;
+  if (nf3 > 0 && d.dates.length > nf3) {
+    const lastIdx = d.dates.length - nf3 - 1;
+    const labelIdx = Math.max(0, lastIdx - 10);
+    const anchorX = d.dates[labelIdx];
+    const lastClose = d.close[lastIdx];
+    if (lastClose != null) {
+      const lineParts = [];
+      if (bm.gap != null) {
+        const gSign = bm.gap >= 0 ? '+' : '';
+        lineParts.push('<b>' + gSign + bm.gap.toFixed(2) + '%</b>');
+      }
+      if (bm.rel_vol != null) lineParts.push('RelVol ' + bm.rel_vol.toFixed(1) + 'x');
+      if (bm.rank != null) lineParts.push('Rank ' + bm.rank);
+      if (bm.beta != null) lineParts.push('β ' + bm.beta.toFixed(2));
+      if (bm.ath_gap != null) { const ags = bm.ath_gap >= 0 ? '+' : ''; lineParts.push('ATH ' + ags + bm.ath_gap.toFixed(1) + '%'); }
+      if (bm.higher_low != null) lineParts.push('HL ' + bm.higher_low.toFixed(2));
+      if (bm.prior_breakouts) lineParts.push(bm.prior_breakouts + ' prior');
+      if (bm.signal) lineParts.push(bm.signal);
+      if (bm.tags && bm.tags.length) lineParts.push(bm.tags.join(' '));
+      if (lineParts.length) {
+        const gColor = (bm.gap != null) ? (bm.gap >= 0 ? '#26a69a' : '#ef5350') : (bm.ath_gap != null ? (bm.ath_gap >= 0 ? '#26a69a' : '#ef5350') : '#2962ff');
+        annotations.push({
+          x: anchorX, y: lastClose, xref: 'x', yref: 'y',
+          text: lineParts.join('  '),
+          showarrow: true, arrowhead: 0, arrowcolor: 'rgba(150,150,150,0.5)', arrowwidth: 1,
+          ax: 0, ay: -36,
+          font: { color: gColor, size: 11, family: 'sans-serif' },
+          xanchor: 'center', yanchor: 'bottom',
+          bgcolor: 'rgba(255,255,255,0.9)', bordercolor: gColor, borderwidth: 1, borderpad: 4,
+        });
+      }
+    }
+  }
+
+  // ── Month tick labels for x-axis (TradingView style) ────────────
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthTicks = { vals: [], text: [] };
+  let lastMonth = -1;
+  d.dates.forEach(function(dd) {
+    const m = new Date(dd).getUTCMonth();
+    if (m !== lastMonth) { monthTicks.vals.push(dd); monthTicks.text.push(MONTH_SHORT[m]); lastMonth = m; }
+  });
+
+  const layout = {
+    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
+    font: { color: '#131722', size: 11 },
+    margin: { l: 8, r: 70, t: 10, b: 30 },
+    shapes: shapes,
+    annotations: annotations,
+    xaxis: {
+      rangeslider: { visible: false },
+      showgrid: true, gridcolor: '#e0e3eb', gridwidth: 1,
+      type: 'category', tickangle: 0,
+      tickvals: monthTicks.vals, ticktext: monthTicks.text,
+    },
+    yaxis: {
+      domain: [0.28, 1],
+      showgrid: true, gridcolor: '#e0e3eb', gridwidth: 1,
+      side: 'right', automargin: false,
+      showline: false, mirror: false, zeroline: false,
+    },
+    yaxis2: {
+      domain: [0, 0.24],
+      showgrid: false, side: 'right', automargin: false,
+      showline: false, mirror: false, zeroline: false,
+    },
+    legend: {
+      x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.8)',
+      bordercolor: '#d1d4dc', borderwidth: 1,
+      font: { size: 11 },
+    },
+    showlegend: true,
+    bargap: 0.1,
+  };
+
+  Plotly.react('chart', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+if (TICKERS.length > 0) showChart(TICKERS[0]);
+</script>
+</body>
+</html>
