@@ -5,26 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Screening Reports</title>
   <style>
-        :root { --bg: #f8fafc; --panel: #ffffff; --text: #0f172a; --muted: #64748b; --line: #e2e8f0; --accent: #0284c7; --accent-soft: #e0f2fe; }
+        :root { --bg: #131722; --panel: #1e222d; --text: #d1d4dc; --muted: #787b86; --line: #434651; --accent: #2962ff; --accent-soft: #2a2e39; }
     * { box-sizing: border-box; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Noto Sans", sans-serif; }
-        .layout { max-width: 1120px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 240px 1fr; gap: 18px; }
-        .menu, .content { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
-        .menu { padding: 12px; height: fit-content; }
+        .layout { width: 100%; margin: 0; padding: 0; display: grid; grid-template-columns: 230px 1fr; gap: 0; align-items: stretch; }
+        .menu, .content { background: var(--panel); border: none; border-radius: 0; }
+        .menu { padding: 14px 10px; min-height: 100vh; border-right: 1px solid var(--line); }
         .menu h2 { margin: 0 0 10px; font-size: 14px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; }
-        .menu a { display: block; text-decoration: none; padding: 10px 12px; border-radius: 8px; font-weight: 600; color: var(--text); background: var(--accent-soft); border: 1px solid #bae6fd; }
-        .content { padding: 18px; }
+        .menu a { display: block; text-decoration: none; padding: 10px 12px; border-radius: 6px; font-weight: 600; color: var(--text); background: var(--accent-soft); border: 1px solid var(--line); }
+        .menu a:hover { border-color: var(--accent); }
+        .content { padding: 18px 18px 18px 20px; background: var(--bg); }
         h1 { margin: 0; font-size: clamp(22px, 3vw, 30px); }
         .sub { margin: 8px 0 2px; color: var(--muted); font-size: 14px; }
         .version { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
         .list { display: grid; gap: 10px; }
-        .report-link { display: flex; justify-content: space-between; gap: 10px; align-items: center; text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text); }
-        .report-link:hover { border-color: var(--accent); background: #f0f9ff; }
+        .report-link { display: flex; justify-content: space-between; gap: 10px; align-items: center; text-decoration: none; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; color: var(--text); background: var(--panel); }
+        .report-link:hover { border-color: var(--accent); background: #232734; }
         .name { font-weight: 600; }
         .meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
         .empty { color: var(--muted); margin: 6px 0; }
         @media (max-width: 860px) {
             .layout { grid-template-columns: 1fr; }
+            .menu { min-height: auto; border-right: none; border-bottom: 1px solid var(--line); }
         }
   </style>
 </head>
@@ -37,7 +39,7 @@
         <section id="screening" class="content">
       <h1>Screening Reports</h1>
             <p class="sub">Klicke einen Screener, um die Detail-HTML zu oeffnen.</p>
-            <p class="version">Version: 20260602-155707 | Generated: 2026-06-02 15:57:07</p>
+            <p class="version">Version: 20260602-160656 | Generated: 2026-06-02 16:06:56</p>
             <div class="list">
                 <a class="report-link" href="screening/ema200-long-bounce.html"><span class="name">Ema200 Long Bounce</span><span class="meta">2026-06-01 22:21:12</span></a>
 <a class="report-link" href="screening/false-breakout-long.html"><span class="name">False Breakout Long</span><span class="meta">2026-06-01 22:19:57</span></a>
