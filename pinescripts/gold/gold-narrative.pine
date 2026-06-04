@@ -1,69 +1,326 @@
-// @version=5
-// VERSION-CHECK: v9 (2026-06-04)
-indicator("Gold Macro Events", overlay=true, shorttitle="GoldNarr", max_lines_count=300, max_labels_count=300)
+//@version=6
+// =============================================================================
+//  GOLD MACRO NARRATIVE EVENTS  ·  CPI / PCE / NFP / FOMC / PPI
+// -----------------------------------------------------------------------------
+//  Zeichnet wichtige US-Makro-Termine als senkrechte Linie + Infotext-Block
+//  direkt in den Gold-Chart (XAU/USD). Zeiten werden in deutscher Zeit
+//  (MEZ/MESZ) angezeigt.
+//
+//  WICHTIG – manuelle Pflege:
+//  Pine Script kann KEINE Live-Daten / keinen Wirtschaftskalender abrufen.
+//  Du trägst die Termine unten in der Tabelle "EVENTS" selbst ein.
+//  Format pro Zeile:  addEvent(JAHR, MONAT, TAG, STUNDE_ET, MINUTE_ET, "TYP", "INFOTEXT")
+//  -> Stunde/Minute in US-Ostküstenzeit (ET) eintragen, da die US-Daten so
+//     terminiert sind (CPI/NFP/PPI meist 08:30 ET, FOMC meist 14:00 ET).
+//     Das Script rechnet selbst nach deutscher Zeit um und zeigt sie an.
+// =============================================================================
 
-show_cpi = input.bool(true, "CPI 8:30 ET", group="Events")
-show_pce = input.bool(true, "PCE 8:30 ET", group="Events")
-show_fomc = input.bool(true, "FOMC 14:00 ET", group="Events")
-show_ppi = input.bool(false, "PPI 8:30 ET", group="Events")
-show_nfp = input.bool(false, "NFP 8:30 ET", group="Events")
-ltr = input.int(60, "Linie Transparenz", minval=0, maxval=95, group="Stil")
-bgt = input.int(88, "Hintergrund Transparenz", minval=70, maxval=97, group="Stil")
-show_bg = input.bool(true, "Hintergrundfarbe", group="Stil")
-c_cpi = input.color(#ff9800, "CPI", group="Farben")
-c_pce = input.color(#2196f3, "PCE", group="Farben")
-c_fomc = input.color(#ef5350, "FOMC", group="Farben")
-c_ppi = input.color(#9c27b0, "PPI", group="Farben")
-c_nfp = input.color(#26a69a, "NFP", group="Farben")
+indicator("Gold Macro Narrative Events", overlay = true, max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
 
-f_draw(col, txt) =>
-    line.new(bar_index, 0.01, bar_index, 99999.0, xloc=xloc.bar_index, color=color.new(col, ltr), width=1)
-    label.new(bar_index, 0, txt, xloc=xloc.bar_index, yloc=yloc.abovebar, color=color.new(col, 72), textcolor=color.white, style=label.style_label_down, size=size.small)
+// ----------------------------- EINSTELLUNGEN --------------------------------
+grpFilter = "Event-Typen anzeigen"
+showCPI   = input.bool(true,  "CPI  (Verbraucherpreise / Inflation)", group = grpFilter)
+showPCE   = input.bool(true,  "PCE  (Fed-bevorzugtes Inflationsmaß)", group = grpFilter)
+showNFP   = input.bool(true,  "NFP  (Arbeitsmarktbericht)",           group = grpFilter)
+showFOMC  = input.bool(true,  "FOMC (Zinsentscheidung)",              group = grpFilter)
+showPPI   = input.bool(true,  "PPI  (Erzeugerpreise)",                group = grpFilter)
 
-yr = year(time)
-mo = month(time)
-dy = dayofmonth(time)
+grpStyle  = "Darstellung"
+lineWidth = input.int(2, "Linienbreite", minval = 1, maxval = 4, group = grpStyle)
+lineStyleSel = input.string("Gestrichelt", "Linienstil", options = ["Durchgezogen", "Gestrichelt", "Gepunktet"], group = grpStyle)
+labelSize = input.string("Normal", "Textgröße", options = ["Klein", "Normal", "Groß", "Riesig"], group = grpStyle)
+showCountdownTbl = input.bool(true, "Tabelle: nächstes Event oben rechts", group = grpStyle)
+maxFutureDays = input.int(120, "Nur Events der letzten/nächsten X Tage", minval = 7, maxval = 720, group = grpStyle)
 
-is_cpi = (yr==2024 and mo==1 and dy==11) or (yr==2024 and mo==2 and dy==13) or (yr==2024 and mo==3 and dy==12) or (yr==2024 and mo==4 and dy==10) or (yr==2024 and mo==5 and dy==15) or (yr==2024 and mo==6 and dy==12) or (yr==2024 and mo==7 and dy==11) or (yr==2024 and mo==8 and dy==14) or (yr==2024 and mo==9 and dy==11) or (yr==2024 and mo==10 and dy==10) or (yr==2024 and mo==11 and dy==13) or (yr==2024 and mo==12 and dy==11)
-is_cpi := is_cpi or (yr==2025 and mo==1 and dy==15) or (yr==2025 and mo==2 and dy==12) or (yr==2025 and mo==3 and dy==12) or (yr==2025 and mo==4 and dy==10) or (yr==2025 and mo==5 and dy==13) or (yr==2025 and mo==6 and dy==11) or (yr==2025 and mo==7 and dy==15) or (yr==2025 and mo==8 and dy==12) or (yr==2025 and mo==9 and dy==10) or (yr==2025 and mo==10 and dy==15) or (yr==2025 and mo==11 and dy==12) or (yr==2025 and mo==12 and dy==10)
-is_cpi := is_cpi or (yr==2026 and mo==1 and dy==14) or (yr==2026 and mo==2 and dy==11) or (yr==2026 and mo==3 and dy==11) or (yr==2026 and mo==4 and dy==10) or (yr==2026 and mo==5 and dy==13) or (yr==2026 and mo==6 and dy==10) or (yr==2026 and mo==7 and dy==15) or (yr==2026 and mo==8 and dy==12) or (yr==2026 and mo==9 and dy==9) or (yr==2026 and mo==10 and dy==14) or (yr==2026 and mo==11 and dy==12) or (yr==2026 and mo==12 and dy==9)
+grpColor = "Farben"
+colCPI   = input.color(color.new(#e74c3c, 0), "CPI",  group = grpColor, inline = "c1")
+colPCE   = input.color(color.new(#e67e22, 0), "PCE",  group = grpColor, inline = "c1")
+colNFP   = input.color(color.new(#3498db, 0), "NFP",  group = grpColor, inline = "c2")
+colFOMC  = input.color(color.new(#9b59b6, 0), "FOMC", group = grpColor, inline = "c2")
+colPPI   = input.color(color.new(#16a085, 0), "PPI",  group = grpColor, inline = "c3")
 
-is_pce = (yr==2024 and mo==2 and dy==29) or (yr==2024 and mo==3 and dy==29) or (yr==2024 and mo==4 and dy==26) or (yr==2024 and mo==5 and dy==31) or (yr==2024 and mo==6 and dy==28) or (yr==2024 and mo==7 and dy==26) or (yr==2024 and mo==8 and dy==30) or (yr==2024 and mo==9 and dy==27) or (yr==2024 and mo==10 and dy==31) or (yr==2024 and mo==11 and dy==27) or (yr==2024 and mo==12 and dy==20)
-is_pce := is_pce or (yr==2025 and mo==1 and dy==31) or (yr==2025 and mo==2 and dy==28) or (yr==2025 and mo==3 and dy==28) or (yr==2025 and mo==4 and dy==30) or (yr==2025 and mo==5 and dy==30) or (yr==2025 and mo==6 and dy==27) or (yr==2025 and mo==7 and dy==31) or (yr==2025 and mo==8 and dy==29) or (yr==2025 and mo==9 and dy==26) or (yr==2025 and mo==10 and dy==31) or (yr==2025 and mo==11 and dy==26) or (yr==2025 and mo==12 and dy==19)
-is_pce := is_pce or (yr==2026 and mo==1 and dy==30) or (yr==2026 and mo==2 and dy==27) or (yr==2026 and mo==3 and dy==27) or (yr==2026 and mo==4 and dy==30) or (yr==2026 and mo==5 and dy==29) or (yr==2026 and mo==6 and dy==26)
+// --------------------------- HILFSFUNKTIONEN --------------------------------
+// Liniendarstellung
+f_lineStyle() =>
+    lineStyleSel == "Durchgezogen" ? line.style_solid : lineStyleSel == "Gepunktet" ? line.style_dotted : line.style_dashed
 
-is_fomc = (yr==2024 and mo==1 and dy==31) or (yr==2024 and mo==3 and dy==20) or (yr==2024 and mo==5 and dy==1) or (yr==2024 and mo==6 and dy==12) or (yr==2024 and mo==7 and dy==31) or (yr==2024 and mo==9 and dy==18) or (yr==2024 and mo==11 and dy==7) or (yr==2024 and mo==12 and dy==18)
-is_fomc := is_fomc or (yr==2025 and mo==1 and dy==29) or (yr==2025 and mo==3 and dy==19) or (yr==2025 and mo==5 and dy==7) or (yr==2025 and mo==6 and dy==18) or (yr==2025 and mo==7 and dy==30) or (yr==2025 and mo==9 and dy==17) or (yr==2025 and mo==10 and dy==29) or (yr==2025 and mo==12 and dy==10)
-is_fomc := is_fomc or (yr==2026 and mo==1 and dy==28) or (yr==2026 and mo==3 and dy==18) or (yr==2026 and mo==5 and dy==6) or (yr==2026 and mo==6 and dy==17) or (yr==2026 and mo==7 and dy==29) or (yr==2026 and mo==9 and dy==16) or (yr==2026 and mo==10 and dy==28) or (yr==2026 and mo==12 and dy==9)
+f_labelSize() =>
+    labelSize == "Klein" ? size.small : labelSize == "Normal" ? size.normal : labelSize == "Groß" ? size.large : size.huge
 
-is_ppi = (yr==2024 and mo==1 and dy==12) or (yr==2024 and mo==2 and dy==16) or (yr==2024 and mo==3 and dy==14) or (yr==2024 and mo==4 and dy==11) or (yr==2024 and mo==5 and dy==14) or (yr==2024 and mo==6 and dy==13) or (yr==2024 and mo==7 and dy==12) or (yr==2024 and mo==8 and dy==13) or (yr==2024 and mo==9 and dy==12) or (yr==2024 and mo==10 and dy==11) or (yr==2024 and mo==11 and dy==14) or (yr==2024 and mo==12 and dy==12)
-is_ppi := is_ppi or (yr==2025 and mo==1 and dy==14) or (yr==2025 and mo==2 and dy==13) or (yr==2025 and mo==3 and dy==13) or (yr==2025 and mo==4 and dy==11) or (yr==2025 and mo==5 and dy==15) or (yr==2025 and mo==6 and dy==12) or (yr==2025 and mo==7 and dy==15) or (yr==2025 and mo==8 and dy==14) or (yr==2025 and mo==9 and dy==11) or (yr==2025 and mo==10 and dy==14) or (yr==2025 and mo==11 and dy==13) or (yr==2025 and mo==12 and dy==11)
-is_ppi := is_ppi or (yr==2026 and mo==1 and dy==15) or (yr==2026 and mo==2 and dy==12) or (yr==2026 and mo==3 and dy==12) or (yr==2026 and mo==4 and dy==9) or (yr==2026 and mo==5 and dy==14) or (yr==2026 and mo==6 and dy==11)
+// Event-Typ -> Farbe
+f_color(string t) =>
+    t == "CPI"  ? colCPI  :
+     t == "PCE"  ? colPCE  :
+     t == "NFP"  ? colNFP  :
+     t == "FOMC" ? colFOMC :
+     t == "PPI"  ? colPPI  : color.gray
 
-is_nfp = (yr==2024 and mo==1 and dy==5) or (yr==2024 and mo==2 and dy==2) or (yr==2024 and mo==3 and dy==8) or (yr==2024 and mo==4 and dy==5) or (yr==2024 and mo==5 and dy==3) or (yr==2024 and mo==6 and dy==7) or (yr==2024 and mo==7 and dy==5) or (yr==2024 and mo==8 and dy==2) or (yr==2024 and mo==9 and dy==6) or (yr==2024 and mo==10 and dy==4) or (yr==2024 and mo==11 and dy==1) or (yr==2024 and mo==12 and dy==6)
-is_nfp := is_nfp or (yr==2025 and mo==1 and dy==10) or (yr==2025 and mo==2 and dy==7) or (yr==2025 and mo==3 and dy==7) or (yr==2025 and mo==4 and dy==4) or (yr==2025 and mo==5 and dy==2) or (yr==2025 and mo==6 and dy==6) or (yr==2025 and mo==7 and dy==3) or (yr==2025 and mo==8 and dy==1) or (yr==2025 and mo==9 and dy==5) or (yr==2025 and mo==10 and dy==3) or (yr==2025 and mo==11 and dy==7) or (yr==2025 and mo==12 and dy==5)
-is_nfp := is_nfp or (yr==2026 and mo==1 and dy==9) or (yr==2026 and mo==2 and dy==6) or (yr==2026 and mo==3 and dy==6) or (yr==2026 and mo==4 and dy==3) or (yr==2026 and mo==5 and dy==8) or (yr==2026 and mo==6 and dy==5)
+// Event-Typ -> ist eingeschaltet?
+f_enabled(string t) =>
+    t == "CPI"  ? showCPI  :
+     t == "PCE"  ? showPCE  :
+     t == "NFP"  ? showNFP  :
+     t == "FOMC" ? showFOMC :
+     t == "PPI"  ? showPPI  : false
 
-bgcolor(show_bg and show_cpi and is_cpi ? color.new(c_cpi, bgt) : na)
-bgcolor(show_bg and show_pce and is_pce ? color.new(c_pce, bgt) : na)
-bgcolor(show_bg and show_fomc and is_fomc ? color.new(c_fomc, bgt) : na)
-bgcolor(show_bg and show_ppi and is_ppi ? color.new(c_ppi, bgt) : na)
-bgcolor(show_bg and show_nfp and is_nfp ? color.new(c_nfp, bgt) : na)
+// ET -> deutsche Zeit (MEZ/MESZ) als lesbarer String "HH:MM"
+// Wir lassen Pine die Zeitzonen-Umrechnung machen, indem wir den UTC-Zeitstempel
+// des Events bilden und ihn in "Europe/Berlin" formatieren.
+// Da US-DST und EU-DST nicht exakt gleich schalten, ist die ET->UTC-Offsetwahl
+// approximativ über den Monat gelöst (ET = UTC-4 in Sommerzeit, UTC-5 Winter).
+f_etToUtcMillis(int y, int mo, int d, int hET, int mnET) =>
+    // grobe US-DST-Regel: DST aktiv ca. März..November
+    bool usDst = mo > 3 and mo < 11
+    int offset = usDst ? 4 : 5            // Stunden, die man zu ET addiert, um UTC zu bekommen
+    timestamp("GMT+0", y, mo, d, hET + offset, mnET)
 
-if barstate.isconfirmed
-    if show_cpi and is_cpi
-        f_draw(c_cpi, "CPI\n8:30 ET")
-    if show_pce and is_pce
-        f_draw(c_pce, "PCE\n8:30 ET")
-    if show_fomc and is_fomc
-        f_draw(c_fomc, "FOMC\n14:00 ET")
-    if show_ppi and is_ppi
-        f_draw(c_ppi, "PPI\n8:30 ET")
-    if show_nfp and is_nfp
-        f_draw(c_nfp, "NFP\n8:30 ET")
+// formatiert einen UTC-Millis-Zeitstempel als deutsche Ortszeit
+f_fmtBerlin(int ms) =>
+    str.format_time(ms, "dd.MM.yyyy  HH:mm", "Europe/Berlin")
 
-alertcondition(show_cpi and is_cpi, "CPI", "Gold: CPI 8:30 ET")
-alertcondition(show_pce and is_pce, "PCE", "Gold: PCE 8:30 ET")
-alertcondition(show_fomc and is_fomc, "FOMC", "Gold: FOMC 14:00 ET")
-alertcondition(show_ppi and is_ppi, "PPI", "Gold: PPI 8:30 ET")
-alertcondition(show_nfp and is_nfp, "NFP", "Gold: NFP 8:30 ET")
+// ------------------------------ EVENT-SPEICHER ------------------------------
+// Wir sammeln Events in Arrays. addEvent() füllt sie.
+var int[]    evTime  = array.new_int()      // UTC-Millis des Events
+var string[] evType  = array.new_string()   // "CPI" etc.
+var string[] evInfo  = array.new_string()   // Freitext
+
+addEvent(int y, int mo, int d, int hET, int mnET, string t, string info) =>
+    int ms = f_etToUtcMillis(y, mo, d, hET, mnET)
+    array.push(evTime, ms)
+    array.push(evType, t)
+    array.push(evInfo, info)
+
+// =============================================================================
+//  EVENTS  ·  HIER PFLEGEN
+//  Stunde/Minute in ET. Typische Zeiten: CPI/PPI/NFP = 8:30 ET, FOMC = 14:00 ET,
+//  PCE = 8:30 ET. Passe Werte/Texte nach Veröffentlichung an.
+//  (Beispiel-Termine 2025/2026 – bitte gegen offiziellen Kalender prüfen!)
+// =============================================================================
+if barstate.isfirst
+    // ---- 2024 ----
+    addEvent(2024, 1,  11, 8,  30, "CPI",  "US CPI Dezember 2023")
+    addEvent(2024, 1,  12, 8,  30, "PPI",  "US PPI Dezember 2023")
+    addEvent(2024, 1,  31, 14, 0,  "FOMC", "Fed Zinsentscheidung Jan 2024")
+    addEvent(2024, 2,  2,  8,  30, "NFP",  "US NFP Januar 2024")
+    addEvent(2024, 2,  13, 8,  30, "CPI",  "US CPI Januar 2024")
+    addEvent(2024, 2,  16, 8,  30, "PPI",  "US PPI Januar 2024")
+    addEvent(2024, 2,  29, 8,  30, "PCE",  "US PCE Januar 2024")
+    addEvent(2024, 3,  8,  8,  30, "NFP",  "US NFP Februar 2024")
+    addEvent(2024, 3,  12, 8,  30, "CPI",  "US CPI Februar 2024")
+    addEvent(2024, 3,  14, 8,  30, "PPI",  "US PPI Februar 2024")
+    addEvent(2024, 3,  20, 14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+    addEvent(2024, 3,  29, 8,  30, "PCE",  "US PCE Februar 2024")
+    addEvent(2024, 4,  5,  8,  30, "NFP",  "US NFP März 2024")
+    addEvent(2024, 4,  10, 8,  30, "CPI",  "US CPI März 2024\nHeißer als erwartet → Gold fiel")
+    addEvent(2024, 4,  11, 8,  30, "PPI",  "US PPI März 2024")
+    addEvent(2024, 4,  26, 8,  30, "PCE",  "US PCE März 2024")
+    addEvent(2024, 5,  1,  14, 0,  "FOMC", "Fed Zinsentscheidung Mai 2024")
+    addEvent(2024, 5,  3,  8,  30, "NFP",  "US NFP April 2024")
+    addEvent(2024, 5,  14, 8,  30, "CPI",  "US CPI April 2024")
+    addEvent(2024, 5,  15, 8,  30, "PPI",  "US PPI April 2024")
+    addEvent(2024, 5,  31, 8,  30, "PCE",  "US PCE April 2024")
+    addEvent(2024, 6,  7,  8,  30, "NFP",  "US NFP Mai 2024")
+    addEvent(2024, 6,  12, 8,  30, "CPI",  "US CPI Mai 2024")
+    addEvent(2024, 6,  12, 14, 0,  "FOMC", "Fed Zinsentscheidung Jun 2024 + Dot Plot")
+    addEvent(2024, 6,  13, 8,  30, "PPI",  "US PPI Mai 2024")
+    addEvent(2024, 6,  28, 8,  30, "PCE",  "US PCE Mai 2024")
+    addEvent(2024, 7,  5,  8,  30, "NFP",  "US NFP Juni 2024")
+    addEvent(2024, 7,  11, 8,  30, "CPI",  "US CPI Juni 2024")
+    addEvent(2024, 7,  12, 8,  30, "PPI",  "US PPI Juni 2024")
+    addEvent(2024, 7,  26, 8,  30, "PCE",  "US PCE Juni 2024")
+    addEvent(2024, 7,  31, 14, 0,  "FOMC", "Fed Zinsentscheidung Jul 2024")
+    addEvent(2024, 8,  2,  8,  30, "NFP",  "US NFP Juli 2024")
+    addEvent(2024, 8,  13, 8,  30, "PPI",  "US PPI Juli 2024")
+    addEvent(2024, 8,  14, 8,  30, "CPI",  "US CPI Juli 2024")
+    addEvent(2024, 8,  30, 8,  30, "PCE",  "US PCE Juli 2024")
+    addEvent(2024, 9,  6,  8,  30, "NFP",  "US NFP August 2024")
+    addEvent(2024, 9,  11, 8,  30, "CPI",  "US CPI August 2024")
+    addEvent(2024, 9,  12, 8,  30, "PPI",  "US PPI August 2024")
+    addEvent(2024, 9,  18, 14, 0,  "FOMC", "Fed Zinssenkung -50bp\nErste Senkung seit 2020")
+    addEvent(2024, 9,  27, 8,  30, "PCE",  "US PCE August 2024")
+    addEvent(2024, 10, 4,  8,  30, "NFP",  "US NFP September 2024")
+    addEvent(2024, 10, 10, 8,  30, "CPI",  "US CPI September 2024")
+    addEvent(2024, 10, 11, 8,  30, "PPI",  "US PPI September 2024")
+    addEvent(2024, 10, 31, 8,  30, "PCE",  "US PCE September 2024")
+    addEvent(2024, 11, 1,  8,  30, "NFP",  "US NFP Oktober 2024")
+    addEvent(2024, 11, 7,  14, 0,  "FOMC", "Fed Zinssenkung -25bp")
+    addEvent(2024, 11, 13, 8,  30, "CPI",  "US CPI Oktober 2024")
+    addEvent(2024, 11, 14, 8,  30, "PPI",  "US PPI Oktober 2024")
+    addEvent(2024, 11, 27, 8,  30, "PCE",  "US PCE Oktober 2024")
+    addEvent(2024, 12, 6,  8,  30, "NFP",  "US NFP November 2024")
+    addEvent(2024, 12, 11, 8,  30, "CPI",  "US CPI November 2024")
+    addEvent(2024, 12, 12, 8,  30, "PPI",  "US PPI November 2024")
+    addEvent(2024, 12, 18, 14, 0,  "FOMC", "Fed Zinssenkung -25bp + Dot Plot")
+    addEvent(2024, 12, 20, 8,  30, "PCE",  "US PCE November 2024")
+    // ---- 2025 ----
+    addEvent(2025, 1,  10, 8,  30, "NFP",  "US NFP Dezember 2024")
+    addEvent(2025, 1,  14, 8,  30, "PPI",  "US PPI Dezember 2024")
+    addEvent(2025, 1,  15, 8,  30, "CPI",  "US CPI Dezember 2024")
+    addEvent(2025, 1,  29, 14, 0,  "FOMC", "Fed Zinsentscheidung Jan 2025\nPause erwartet")
+    addEvent(2025, 1,  31, 8,  30, "PCE",  "US PCE Dezember 2024")
+    addEvent(2025, 2,  7,  8,  30, "NFP",  "US NFP Januar 2025")
+    addEvent(2025, 2,  12, 8,  30, "CPI",  "US CPI Januar 2025")
+    addEvent(2025, 2,  13, 8,  30, "PPI",  "US PPI Januar 2025")
+    addEvent(2025, 2,  28, 8,  30, "PCE",  "US PCE Januar 2025")
+    addEvent(2025, 3,  7,  8,  30, "NFP",  "US NFP Februar 2025")
+    addEvent(2025, 3,  12, 8,  30, "CPI",  "US CPI Februar 2025")
+    addEvent(2025, 3,  13, 8,  30, "PPI",  "US PPI Februar 2025")
+    addEvent(2025, 3,  19, 14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+    addEvent(2025, 3,  28, 8,  30, "PCE",  "US PCE Februar 2025")
+    addEvent(2025, 4,  4,  8,  30, "NFP",  "US NFP März 2025")
+    addEvent(2025, 4,  10, 8,  30, "CPI",  "US CPI März 2025")
+    addEvent(2025, 4,  11, 8,  30, "PPI",  "US PPI März 2025")
+    addEvent(2025, 4,  30, 8,  30, "PCE",  "US PCE März 2025")
+    addEvent(2025, 5,  2,  8,  30, "NFP",  "US NFP April 2025")
+    addEvent(2025, 5,  7,  14, 0,  "FOMC", "Fed Zinsentscheidung Mai 2025")
+    addEvent(2025, 5,  13, 8,  30, "CPI",  "US CPI April 2025")
+    addEvent(2025, 5,  15, 8,  30, "PPI",  "US PPI April 2025")
+    addEvent(2025, 5,  30, 8,  30, "PCE",  "US PCE April 2025")
+    addEvent(2025, 6,  6,  8,  30, "NFP",  "US NFP Mai 2025")
+    addEvent(2025, 6,  11, 8,  30, "CPI",  "US CPI Mai 2025")
+    addEvent(2025, 6,  12, 8,  30, "PPI",  "US PPI Mai 2025")
+    addEvent(2025, 6,  18, 14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+    addEvent(2025, 6,  27, 8,  30, "PCE",  "US PCE Mai 2025")
+    addEvent(2025, 7,  3,  8,  30, "NFP",  "US NFP Juni 2025")
+    addEvent(2025, 7,  15, 8,  30, "CPI",  "US CPI Juni 2025")
+    addEvent(2025, 7,  15, 8,  30, "PPI",  "US PPI Juni 2025")
+    addEvent(2025, 7,  30, 14, 0,  "FOMC", "Fed Zinsentscheidung Jul 2025")
+    addEvent(2025, 7,  31, 8,  30, "PCE",  "US PCE Juni 2025")
+    addEvent(2025, 8,  1,  8,  30, "NFP",  "US NFP Juli 2025")
+    addEvent(2025, 8,  12, 8,  30, "CPI",  "US CPI Juli 2025")
+    addEvent(2025, 8,  14, 8,  30, "PPI",  "US PPI Juli 2025")
+    addEvent(2025, 8,  29, 8,  30, "PCE",  "US PCE Juli 2025")
+    addEvent(2025, 9,  5,  8,  30, "NFP",  "US NFP August 2025")
+    addEvent(2025, 9,  10, 8,  30, "CPI",  "US CPI August 2025")
+    addEvent(2025, 9,  11, 8,  30, "PPI",  "US PPI August 2025")
+    addEvent(2025, 9,  17, 14, 0,  "FOMC", "Fed Zinsentscheidung Sep 2025 + Dot Plot")
+    addEvent(2025, 9,  26, 8,  30, "PCE",  "US PCE August 2025")
+    addEvent(2025, 10, 3,  8,  30, "NFP",  "US NFP September 2025")
+    addEvent(2025, 10, 15, 8,  30, "CPI",  "US CPI September 2025")
+    addEvent(2025, 10, 14, 8,  30, "PPI",  "US PPI September 2025")
+    addEvent(2025, 10, 29, 14, 0,  "FOMC", "Fed Zinsentscheidung Okt 2025")
+    addEvent(2025, 10, 31, 8,  30, "PCE",  "US PCE September 2025")
+    addEvent(2025, 11, 7,  8,  30, "NFP",  "US NFP Oktober 2025")
+    addEvent(2025, 11, 12, 8,  30, "CPI",  "US CPI Oktober 2025")
+    addEvent(2025, 11, 13, 8,  30, "PPI",  "US PPI Oktober 2025")
+    addEvent(2025, 11, 26, 8,  30, "PCE",  "US PCE Oktober 2025")
+    addEvent(2025, 12, 5,  8,  30, "NFP",  "US NFP November 2025")
+    addEvent(2025, 12, 10, 8,  30, "CPI",  "US CPI November 2025\nMarktbeweger für Gold")
+    addEvent(2025, 12, 11, 8,  30, "PPI",  "US PPI November 2025")
+    addEvent(2025, 12, 10, 14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+    addEvent(2025, 12, 19, 8,  30, "PCE",  "US PCE November 2025")
+    // ---- 2026 ----
+    addEvent(2026, 1,  9,  8,  30, "NFP",  "US NFP Dezember 2025")
+    addEvent(2026, 1,  14, 8,  30, "CPI",  "US CPI Dezember 2025")
+    addEvent(2026, 1,  15, 8,  30, "PPI",  "US PPI Dezember 2025")
+    addEvent(2026, 1,  28, 14, 0,  "FOMC", "Fed Zinsentscheidung Jan 2026")
+    addEvent(2026, 1,  30, 8,  30, "PCE",  "US PCE Dezember 2025")
+    addEvent(2026, 2,  6,  8,  30, "NFP",  "US NFP Januar 2026")
+    addEvent(2026, 2,  11, 8,  30, "CPI",  "US CPI Januar 2026")
+    addEvent(2026, 2,  12, 8,  30, "PPI",  "US PPI Januar 2026")
+    addEvent(2026, 2,  27, 8,  30, "PCE",  "US PCE Januar 2026")
+    addEvent(2026, 3,  6,  8,  30, "NFP",  "US NFP Februar 2026")
+    addEvent(2026, 3,  11, 8,  30, "CPI",  "US CPI Februar 2026")
+    addEvent(2026, 3,  12, 8,  30, "PPI",  "US PPI Februar 2026")
+    addEvent(2026, 3,  18, 14, 0,  "FOMC", "Fed Zinsentscheidung + neue Projektionen")
+    addEvent(2026, 3,  27, 8,  30, "PCE",  "US PCE Februar 2026")
+    addEvent(2026, 4,  3,  8,  30, "NFP",  "US NFP März 2026")
+    addEvent(2026, 4,  10, 8,  30, "CPI",  "US CPI März 2026")
+    addEvent(2026, 4,  9,  8,  30, "PPI",  "US PPI März 2026")
+    addEvent(2026, 4,  30, 8,  30, "PCE",  "US PCE März 2026")
+    addEvent(2026, 5,  6,  14, 0,  "FOMC", "Fed Zinsentscheidung Mai 2026")
+    addEvent(2026, 5,  8,  8,  30, "NFP",  "US NFP April 2026")
+    addEvent(2026, 5,  13, 8,  30, "CPI",  "US CPI April 2026")
+    addEvent(2026, 5,  14, 8,  30, "PPI",  "US PPI April 2026")
+    addEvent(2026, 5,  29, 8,  30, "PCE",  "US PCE April 2026")
+    addEvent(2026, 6,  5,  8,  30, "NFP",  "US NFP Mai 2026")
+    addEvent(2026, 6,  10, 8,  30, "CPI",  "US CPI Mai 2026")
+    addEvent(2026, 6,  11, 8,  30, "PPI",  "US PPI Mai 2026")
+    addEvent(2026, 6,  17, 14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+    addEvent(2026, 6,  26, 8,  30, "PCE",  "US PCE Mai 2026")
+    addEvent(2026, 7,  9,  8,  30, "NFP",  "US NFP Juni 2026")  // geschätzt
+    addEvent(2026, 7,  15, 8,  30, "CPI",  "US CPI Juni 2026")  // geschätzt
+    addEvent(2026, 7,  29, 14, 0,  "FOMC", "Fed Zinsentscheidung Jul 2026")
+    addEvent(2026, 8,  7,  8,  30, "NFP",  "US NFP Juli 2026")  // geschätzt
+    addEvent(2026, 8,  12, 8,  30, "CPI",  "US CPI Juli 2026")  // geschätzt
+    addEvent(2026, 9,  4,  8,  30, "NFP",  "US NFP August 2026") // geschätzt
+    addEvent(2026, 9,  9,  8,  30, "CPI",  "US CPI August 2026") // geschätzt
+    addEvent(2026, 9,  16, 14, 0,  "FOMC", "Fed Zinsentscheidung Sep 2026 + Dot Plot")
+    addEvent(2026, 10, 2,  8,  30, "NFP",  "US NFP Sep 2026")   // geschätzt
+    addEvent(2026, 10, 14, 8,  30, "CPI",  "US CPI Sep 2026")   // geschätzt
+    addEvent(2026, 10, 28, 14, 0,  "FOMC", "Fed Zinsentscheidung Okt 2026")
+    addEvent(2026, 11, 6,  8,  30, "NFP",  "US NFP Okt 2026")   // geschätzt
+    addEvent(2026, 11, 12, 8,  30, "CPI",  "US CPI Okt 2026")   // geschätzt
+    addEvent(2026, 12, 4,  8,  30, "NFP",  "US NFP Nov 2026")   // geschätzt
+    addEvent(2026, 12, 9,  8,  30, "CPI",  "US CPI Nov 2026")   // geschätzt
+    addEvent(2026, 12, 9,  14, 0,  "FOMC", "Fed Zinsentscheidung + Dot Plot")
+
+// =============================================================================
+//  ZEICHNEN
+//  Wir prüfen auf JEDER Bar, ob ein Event in diese Bar fällt (zwischen
+//  time und time_close). Trifft es zu, zeichnen wir Linie + Label.
+// =============================================================================
+// Damit nichts doppelt gezeichnet wird, merken wir gezeichnete Indizes.
+var bool[] drawn = array.new_bool()
+if barstate.isfirst
+    for i = 0 to (array.size(evTime) > 0 ? array.size(evTime) - 1 : 0)
+        array.push(drawn, false)
+
+barStartMs = time
+barEndMs   = time_close
+nowMs      = timenow
+
+if array.size(evTime) > 0
+    for i = 0 to array.size(evTime) - 1
+        int ems = array.get(evTime, i)
+        string et = array.get(evType, i)
+        // Filter: Typ aktiv?  +  innerhalb Zeitfenster?
+        bool withinWindow = math.abs(nowMs - ems) <= maxFutureDays * 86400000
+        if f_enabled(et) and withinWindow and not array.get(drawn, i)
+            // Fällt das Event in die aktuelle Bar?
+            if ems >= barStartMs and ems < barEndMs
+                col = f_color(et)
+                // --- senkrechte Linie über die volle Höhe ---
+                ln = line.new(x1 = bar_index, y1 = high, x2 = bar_index, y2 = low, xloc = xloc.bar_index, extend = extend.both, color = col, width = lineWidth, style = f_lineStyle())
+                // --- großer Infotext-Block als Label ---
+                string deTime = f_fmtBerlin(ems)
+                string txt = et + "  ·  " + deTime + " (MEZ/MESZ)\n" + array.get(evInfo, i)
+                label.new(x = bar_index, y = high, text = txt, xloc = xloc.bar_index, yloc = yloc.price, color = col, textcolor = color.white, style = label.style_label_down, size = f_labelSize(), textalign = text.align_left)
+                array.set(drawn, i, true)
+
+// =============================================================================
+//  TABELLE: NÄCHSTES EVENT (oben rechts)
+// =============================================================================
+var table tbl = table.new(position.top_right, 1, 2, border_width = 1)
+
+f_findNext() =>
+    int bestMs = na
+    int bestIdx = na
+    if array.size(evTime) > 0
+        for i = 0 to array.size(evTime) - 1
+            int ems = array.get(evTime, i)
+            if f_enabled(array.get(evType, i)) and ems >= nowMs
+                if na(bestMs) or ems < bestMs
+                    bestMs := ems
+                    bestIdx := i
+    [bestMs, bestIdx]
+
+if showCountdownTbl and barstate.islast
+    [nextMs, nextIdx] = f_findNext()
+    if not na(nextIdx)
+        string nt   = array.get(evType, nextIdx)
+        string ninf = array.get(evInfo, nextIdx)
+        // Countdown
+        int diffMs  = nextMs - nowMs
+        int days    = math.floor(diffMs / 86400000)
+        int hours   = math.floor((diffMs % 86400000) / 3600000)
+        int mins    = math.floor((diffMs % 3600000) / 60000)
+        string head = "⏱ NÄCHSTES: " + nt
+        string body = f_fmtBerlin(nextMs) + " MEZ/MESZ\n" + "in " + str.tostring(days) + "d " + str.tostring(hours) + "h " + str.tostring(mins) + "m\n" + ninf
+        table.cell(tbl, 0, 0, head, text_color = color.white, bgcolor = f_color(nt), text_size = size.normal, text_halign = text.align_left)
+        table.cell(tbl, 0, 1, body, text_color = color.white, bgcolor = color.new(color.black, 20), text_size = size.small, text_halign = text.align_left)
+
+// =============================================================================
+//  ALERTS – optional: Alert kurz vor jedem aktiven Event
+// =============================================================================
+alertcondition(true, title = "Macro-Event Hinweis", message = "Gold Macro Event nähert sich – siehe Chart")
