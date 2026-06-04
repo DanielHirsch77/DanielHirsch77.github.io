@@ -1,7 +1,6 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0
 // @version=5
-indicator("Gold Macro Events", overlay=true, shorttitle="GoldNarr",
-     max_lines_count=300, max_labels_count=300)
+indicator("Gold Macro Events", overlay=true, shorttitle="GoldNarr", max_lines_count=300, max_labels_count=300)
 
 // ---- Inputs ----------------------------------------------------------------
 show_cpi  = input.bool(true,  "CPI  8:30 ET",  group="Events")
@@ -18,102 +17,90 @@ c_fomc  = input.color(#ef5350, "FOMC", group="Farben")
 c_ppi   = input.color(#9c27b0, "PPI",  group="Farben")
 c_nfp   = input.color(#26a69a, "NFP",  group="Farben")
 
-// ---- Draw ------------------------------------------------------------------
+// ---- Draw (jede Zeile ein Statement, keine Zeilenfortsetzung) ---------------
 f_draw(col, txt) =>
-    line.new(bar_index, 0.01, bar_index, 99999.0,
-         xloc=xloc.bar_index, color=color.new(col, ltr), width=1)
-    label.new(bar_index, 0,
-         text=txt, xloc=xloc.bar_index, yloc=yloc.abovebar,
-         color=color.new(col, 72), textcolor=color.white,
-         style=label.style_label_down, size=size.small)
+    line.new(bar_index, 0.01, bar_index, 99999.0, xloc=xloc.bar_index, color=color.new(col, ltr), width=1)
+    label.new(bar_index, 0, txt, xloc=xloc.bar_index, yloc=yloc.abovebar, color=color.new(col, 72), textcolor=color.white, style=label.style_label_down, size=size.small)
 
-// ---- Dates -----------------------------------------------------------------
-d = dayofmonth(time)
-m = month(time)
-y = year(time)
+// ---- Datum -----------------------------------------------------------------
+dd = dayofmonth(time)
+mm = month(time)
+yy = year(time)
 
 // CPI
-cpi_a = (y==2024 and m==1  and d==11) or (y==2024 and m==2  and d==13) or (y==2024 and m==3  and d==12)
-cpi_b = (y==2024 and m==4  and d==10) or (y==2024 and m==5  and d==15) or (y==2024 and m==6  and d==12)
-cpi_c = (y==2024 and m==7  and d==11) or (y==2024 and m==8  and d==14) or (y==2024 and m==9  and d==11)
-cpi_d = (y==2024 and m==10 and d==10) or (y==2024 and m==11 and d==13) or (y==2024 and m==12 and d==11)
-cpi_e = (y==2025 and m==1  and d==15) or (y==2025 and m==2  and d==12) or (y==2025 and m==3  and d==12)
-cpi_f = (y==2025 and m==4  and d==10) or (y==2025 and m==5  and d==13) or (y==2025 and m==6  and d==11)
-cpi_g = (y==2025 and m==7  and d==15) or (y==2025 and m==8  and d==12) or (y==2025 and m==9  and d==10)
-cpi_h = (y==2025 and m==10 and d==15) or (y==2025 and m==11 and d==12) or (y==2025 and m==12 and d==10)
-cpi_i = (y==2026 and m==1  and d==14) or (y==2026 and m==2  and d==11) or (y==2026 and m==3  and d==11)
-cpi_j = (y==2026 and m==4  and d==10) or (y==2026 and m==5  and d==13) or (y==2026 and m==6  and d==10)
-cpi_k = (y==2026 and m==7  and d==15) or (y==2026 and m==8  and d==12) or (y==2026 and m==9  and d==9)
-cpi_l = (y==2026 and m==10 and d==14) or (y==2026 and m==11 and d==12) or (y==2026 and m==12 and d==9)
+cpi_a = (yy==2024 and mm==1  and dd==11) or (yy==2024 and mm==2  and dd==13) or (yy==2024 and mm==3  and dd==12)
+cpi_b = (yy==2024 and mm==4  and dd==10) or (yy==2024 and mm==5  and dd==15) or (yy==2024 and mm==6  and dd==12)
+cpi_c = (yy==2024 and mm==7  and dd==11) or (yy==2024 and mm==8  and dd==14) or (yy==2024 and mm==9  and dd==11)
+cpi_d = (yy==2024 and mm==10 and dd==10) or (yy==2024 and mm==11 and dd==13) or (yy==2024 and mm==12 and dd==11)
+cpi_e = (yy==2025 and mm==1  and dd==15) or (yy==2025 and mm==2  and dd==12) or (yy==2025 and mm==3  and dd==12)
+cpi_f = (yy==2025 and mm==4  and dd==10) or (yy==2025 and mm==5  and dd==13) or (yy==2025 and mm==6  and dd==11)
+cpi_g = (yy==2025 and mm==7  and dd==15) or (yy==2025 and mm==8  and dd==12) or (yy==2025 and mm==9  and dd==10)
+cpi_h = (yy==2025 and mm==10 and dd==15) or (yy==2025 and mm==11 and dd==12) or (yy==2025 and mm==12 and dd==10)
+cpi_i = (yy==2026 and mm==1  and dd==14) or (yy==2026 and mm==2  and dd==11) or (yy==2026 and mm==3  and dd==11)
+cpi_j = (yy==2026 and mm==4  and dd==10) or (yy==2026 and mm==5  and dd==13) or (yy==2026 and mm==6  and dd==10)
+cpi_k = (yy==2026 and mm==7  and dd==15) or (yy==2026 and mm==8  and dd==12) or (yy==2026 and mm==9  and dd==9)
+cpi_l = (yy==2026 and mm==10 and dd==14) or (yy==2026 and mm==11 and dd==12) or (yy==2026 and mm==12 and dd==9)
 is_cpi = cpi_a or cpi_b or cpi_c or cpi_d or cpi_e or cpi_f or cpi_g or cpi_h or cpi_i or cpi_j or cpi_k or cpi_l
 
 // PCE
-pce_a = (y==2024 and m==2  and d==29) or (y==2024 and m==3  and d==29) or (y==2024 and m==4  and d==26)
-pce_b = (y==2024 and m==5  and d==31) or (y==2024 and m==6  and d==28) or (y==2024 and m==7  and d==26)
-pce_c = (y==2024 and m==8  and d==30) or (y==2024 and m==9  and d==27) or (y==2024 and m==10 and d==31)
-pce_d = (y==2024 and m==11 and d==27) or (y==2024 and m==12 and d==20)
-pce_e = (y==2025 and m==1  and d==31) or (y==2025 and m==2  and d==28) or (y==2025 and m==3  and d==28)
-pce_f = (y==2025 and m==4  and d==30) or (y==2025 and m==5  and d==30) or (y==2025 and m==6  and d==27)
-pce_g = (y==2025 and m==7  and d==31) or (y==2025 and m==8  and d==29) or (y==2025 and m==9  and d==26)
-pce_h = (y==2025 and m==10 and d==31) or (y==2025 and m==11 and d==26) or (y==2025 and m==12 and d==19)
-pce_i = (y==2026 and m==1  and d==30) or (y==2026 and m==2  and d==27) or (y==2026 and m==3  and d==27)
-pce_j = (y==2026 and m==4  and d==30) or (y==2026 and m==5  and d==29) or (y==2026 and m==6  and d==26)
+pce_a = (yy==2024 and mm==2  and dd==29) or (yy==2024 and mm==3  and dd==29) or (yy==2024 and mm==4  and dd==26)
+pce_b = (yy==2024 and mm==5  and dd==31) or (yy==2024 and mm==6  and dd==28) or (yy==2024 and mm==7  and dd==26)
+pce_c = (yy==2024 and mm==8  and dd==30) or (yy==2024 and mm==9  and dd==27) or (yy==2024 and mm==10 and dd==31)
+pce_d = (yy==2024 and mm==11 and dd==27) or (yy==2024 and mm==12 and dd==20)
+pce_e = (yy==2025 and mm==1  and dd==31) or (yy==2025 and mm==2  and dd==28) or (yy==2025 and mm==3  and dd==28)
+pce_f = (yy==2025 and mm==4  and dd==30) or (yy==2025 and mm==5  and dd==30) or (yy==2025 and mm==6  and dd==27)
+pce_g = (yy==2025 and mm==7  and dd==31) or (yy==2025 and mm==8  and dd==29) or (yy==2025 and mm==9  and dd==26)
+pce_h = (yy==2025 and mm==10 and dd==31) or (yy==2025 and mm==11 and dd==26) or (yy==2025 and mm==12 and dd==19)
+pce_i = (yy==2026 and mm==1  and dd==30) or (yy==2026 and mm==2  and dd==27) or (yy==2026 and mm==3  and dd==27)
+pce_j = (yy==2026 and mm==4  and dd==30) or (yy==2026 and mm==5  and dd==29) or (yy==2026 and mm==6  and dd==26)
 is_pce = pce_a or pce_b or pce_c or pce_d or pce_e or pce_f or pce_g or pce_h or pce_i or pce_j
 
 // FOMC
-fomc_a = (y==2024 and m==1  and d==31) or (y==2024 and m==3  and d==20) or (y==2024 and m==5  and d==1)
-fomc_b = (y==2024 and m==6  and d==12) or (y==2024 and m==7  and d==31) or (y==2024 and m==9  and d==18)
-fomc_c = (y==2024 and m==11 and d==7)  or (y==2024 and m==12 and d==18)
-fomc_d = (y==2025 and m==1  and d==29) or (y==2025 and m==3  and d==19) or (y==2025 and m==5  and d==7)
-fomc_e = (y==2025 and m==6  and d==18) or (y==2025 and m==7  and d==30) or (y==2025 and m==9  and d==17)
-fomc_f = (y==2025 and m==10 and d==29) or (y==2025 and m==12 and d==10)
-fomc_g = (y==2026 and m==1  and d==28) or (y==2026 and m==3  and d==18) or (y==2026 and m==5  and d==6)
-fomc_h = (y==2026 and m==6  and d==17) or (y==2026 and m==7  and d==29) or (y==2026 and m==9  and d==16)
-fomc_i = (y==2026 and m==10 and d==28) or (y==2026 and m==12 and d==9)
+fomc_a = (yy==2024 and mm==1  and dd==31) or (yy==2024 and mm==3  and dd==20) or (yy==2024 and mm==5  and dd==1)
+fomc_b = (yy==2024 and mm==6  and dd==12) or (yy==2024 and mm==7  and dd==31) or (yy==2024 and mm==9  and dd==18)
+fomc_c = (yy==2024 and mm==11 and dd==7)  or (yy==2024 and mm==12 and dd==18)
+fomc_d = (yy==2025 and mm==1  and dd==29) or (yy==2025 and mm==3  and dd==19) or (yy==2025 and mm==5  and dd==7)
+fomc_e = (yy==2025 and mm==6  and dd==18) or (yy==2025 and mm==7  and dd==30) or (yy==2025 and mm==9  and dd==17)
+fomc_f = (yy==2025 and mm==10 and dd==29) or (yy==2025 and mm==12 and dd==10)
+fomc_g = (yy==2026 and mm==1  and dd==28) or (yy==2026 and mm==3  and dd==18) or (yy==2026 and mm==5  and dd==6)
+fomc_h = (yy==2026 and mm==6  and dd==17) or (yy==2026 and mm==7  and dd==29) or (yy==2026 and mm==9  and dd==16)
+fomc_i = (yy==2026 and mm==10 and dd==28) or (yy==2026 and mm==12 and dd==9)
 is_fomc = fomc_a or fomc_b or fomc_c or fomc_d or fomc_e or fomc_f or fomc_g or fomc_h or fomc_i
 
 // PPI
-ppi_a = (y==2024 and m==1  and d==12) or (y==2024 and m==2  and d==16) or (y==2024 and m==3  and d==14)
-ppi_b = (y==2024 and m==4  and d==11) or (y==2024 and m==5  and d==14) or (y==2024 and m==6  and d==13)
-ppi_c = (y==2024 and m==7  and d==12) or (y==2024 and m==8  and d==13) or (y==2024 and m==9  and d==12)
-ppi_d = (y==2024 and m==10 and d==11) or (y==2024 and m==11 and d==14) or (y==2024 and m==12 and d==12)
-ppi_e = (y==2025 and m==1  and d==14) or (y==2025 and m==2  and d==13) or (y==2025 and m==3  and d==13)
-ppi_f = (y==2025 and m==4  and d==11) or (y==2025 and m==5  and d==15) or (y==2025 and m==6  and d==12)
-ppi_g = (y==2025 and m==7  and d==15) or (y==2025 and m==8  and d==14) or (y==2025 and m==9  and d==11)
-ppi_h = (y==2025 and m==10 and d==14) or (y==2025 and m==11 and d==13) or (y==2025 and m==12 and d==11)
-ppi_i = (y==2026 and m==1  and d==15) or (y==2026 and m==2  and d==12) or (y==2026 and m==3  and d==12)
-ppi_j = (y==2026 and m==4  and d==9)  or (y==2026 and m==5  and d==14) or (y==2026 and m==6  and d==11)
+ppi_a = (yy==2024 and mm==1  and dd==12) or (yy==2024 and mm==2  and dd==16) or (yy==2024 and mm==3  and dd==14)
+ppi_b = (yy==2024 and mm==4  and dd==11) or (yy==2024 and mm==5  and dd==14) or (yy==2024 and mm==6  and dd==13)
+ppi_c = (yy==2024 and mm==7  and dd==12) or (yy==2024 and mm==8  and dd==13) or (yy==2024 and mm==9  and dd==12)
+ppi_d = (yy==2024 and mm==10 and dd==11) or (yy==2024 and mm==11 and dd==14) or (yy==2024 and mm==12 and dd==12)
+ppi_e = (yy==2025 and mm==1  and dd==14) or (yy==2025 and mm==2  and dd==13) or (yy==2025 and mm==3  and dd==13)
+ppi_f = (yy==2025 and mm==4  and dd==11) or (yy==2025 and mm==5  and dd==15) or (yy==2025 and mm==6  and dd==12)
+ppi_g = (yy==2025 and mm==7  and dd==15) or (yy==2025 and mm==8  and dd==14) or (yy==2025 and mm==9  and dd==11)
+ppi_h = (yy==2025 and mm==10 and dd==14) or (yy==2025 and mm==11 and dd==13) or (yy==2025 and mm==12 and dd==11)
+ppi_i = (yy==2026 and mm==1  and dd==15) or (yy==2026 and mm==2  and dd==12) or (yy==2026 and mm==3  and dd==12)
+ppi_j = (yy==2026 and mm==4  and dd==9)  or (yy==2026 and mm==5  and dd==14) or (yy==2026 and mm==6  and dd==11)
 is_ppi = ppi_a or ppi_b or ppi_c or ppi_d or ppi_e or ppi_f or ppi_g or ppi_h or ppi_i or ppi_j
 
 // NFP
-nfp_a = (y==2024 and m==1  and d==5)  or (y==2024 and m==2  and d==2)  or (y==2024 and m==3  and d==8)
-nfp_b = (y==2024 and m==4  and d==5)  or (y==2024 and m==5  and d==3)  or (y==2024 and m==6  and d==7)
-nfp_c = (y==2024 and m==7  and d==5)  or (y==2024 and m==8  and d==2)  or (y==2024 and m==9  and d==6)
-nfp_d = (y==2024 and m==10 and d==4)  or (y==2024 and m==11 and d==1)  or (y==2024 and m==12 and d==6)
-nfp_e = (y==2025 and m==1  and d==10) or (y==2025 and m==2  and d==7)  or (y==2025 and m==3  and d==7)
-nfp_f = (y==2025 and m==4  and d==4)  or (y==2025 and m==5  and d==2)  or (y==2025 and m==6  and d==6)
-nfp_g = (y==2025 and m==7  and d==3)  or (y==2025 and m==8  and d==1)  or (y==2025 and m==9  and d==5)
-nfp_h = (y==2025 and m==10 and d==3)  or (y==2025 and m==11 and d==7)  or (y==2025 and m==12 and d==5)
-nfp_i = (y==2026 and m==1  and d==9)  or (y==2026 and m==2  and d==6)  or (y==2026 and m==3  and d==6)
-nfp_j = (y==2026 and m==4  and d==3)  or (y==2026 and m==5  and d==8)  or (y==2026 and m==6  and d==5)
+nfp_a = (yy==2024 and mm==1  and dd==5)  or (yy==2024 and mm==2  and dd==2)  or (yy==2024 and mm==3  and dd==8)
+nfp_b = (yy==2024 and mm==4  and dd==5)  or (yy==2024 and mm==5  and dd==3)  or (yy==2024 and mm==6  and dd==7)
+nfp_c = (yy==2024 and mm==7  and dd==5)  or (yy==2024 and mm==8  and dd==2)  or (yy==2024 and mm==9  and dd==6)
+nfp_d = (yy==2024 and mm==10 and dd==4)  or (yy==2024 and mm==11 and dd==1)  or (yy==2024 and mm==12 and dd==6)
+nfp_e = (yy==2025 and mm==1  and dd==10) or (yy==2025 and mm==2  and dd==7)  or (yy==2025 and mm==3  and dd==7)
+nfp_f = (yy==2025 and mm==4  and dd==4)  or (yy==2025 and mm==5  and dd==2)  or (yy==2025 and mm==6  and dd==6)
+nfp_g = (yy==2025 and mm==7  and dd==3)  or (yy==2025 and mm==8  and dd==1)  or (yy==2025 and mm==9  and dd==5)
+nfp_h = (yy==2025 and mm==10 and dd==3)  or (yy==2025 and mm==11 and dd==7)  or (yy==2025 and mm==12 and dd==5)
+nfp_i = (yy==2026 and mm==1  and dd==9)  or (yy==2026 and mm==2  and dd==6)  or (yy==2026 and mm==3  and dd==6)
+nfp_j = (yy==2026 and mm==4  and dd==3)  or (yy==2026 and mm==5  and dd==8)  or (yy==2026 and mm==6  and dd==5)
 is_nfp = nfp_a or nfp_b or nfp_c or nfp_d or nfp_e or nfp_f or nfp_g or nfp_h or nfp_i or nfp_j
 
-// ---- Background ------------------------------------------------------------
-var color bg_col = na
-bg_col := na
-if show_bg and show_cpi  and is_cpi
-    bg_col := color.new(c_cpi,  bgt)
-if show_bg and show_pce  and is_pce
-    bg_col := color.new(c_pce,  bgt)
-if show_bg and show_fomc and is_fomc
-    bg_col := color.new(c_fomc, bgt)
-if show_bg and show_ppi  and is_ppi
-    bg_col := color.new(c_ppi,  bgt)
-if show_bg and show_nfp  and is_nfp
-    bg_col := color.new(c_nfp,  bgt)
-bgcolor(bg_col)
+// ---- Hintergrund -----------------------------------------------------------
+bgcolor(show_bg and show_cpi  and is_cpi  ? color.new(c_cpi,  bgt) : na)
+bgcolor(show_bg and show_pce  and is_pce  ? color.new(c_pce,  bgt) : na)
+bgcolor(show_bg and show_fomc and is_fomc ? color.new(c_fomc, bgt) : na)
+bgcolor(show_bg and show_ppi  and is_ppi  ? color.new(c_ppi,  bgt) : na)
+bgcolor(show_bg and show_nfp  and is_nfp  ? color.new(c_nfp,  bgt) : na)
 
-// ---- Lines and labels ------------------------------------------------------
+// ---- Linien und Labels -----------------------------------------------------
 if barstate.isconfirmed
     if show_cpi  and is_cpi
         f_draw(c_cpi,  "CPI\n8:30 ET")
