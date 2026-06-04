@@ -26,11 +26,13 @@ showFOMC  = input.bool(true,  "FOMC (Zinsentscheidung)",              group = gr
 showPPI   = input.bool(true,  "PPI  (Erzeugerpreise)",                group = grpFilter)
 
 grpStyle  = "Darstellung"
-lineWidth = input.int(2, "Linienbreite", minval = 1, maxval = 4, group = grpStyle)
+lineWidth    = input.int(1, "Linienbreite", minval = 1, maxval = 4, group = grpStyle)
+lineTrans    = input.int(60, "Linien-Transparenz (0=voll, 90=fast unsichtbar)", minval = 0, maxval = 90, group = grpStyle)
 lineStyleSel = input.string("Gestrichelt", "Linienstil", options = ["Durchgezogen", "Gestrichelt", "Gepunktet"], group = grpStyle)
-labelSize = input.string("Normal", "Textgröße", options = ["Klein", "Normal", "Groß", "Riesig"], group = grpStyle)
+labelSize    = input.string("Klein", "Textgröße", options = ["Klein", "Normal", "Groß"], group = grpStyle)
+labelTrans   = input.int(30, "Label-Transparenz (0=voll, 90=fast unsichtbar)", minval = 0, maxval = 90, group = grpStyle)
 showCountdownTbl = input.bool(true, "Tabelle: nächstes Event oben rechts", group = grpStyle)
-maxFutureDays = input.int(120, "Nur Events der letzten/nächsten X Tage", minval = 7, maxval = 720, group = grpStyle)
+maxFutureDays    = input.int(120, "Nur Events der letzten/nächsten X Tage", minval = 7, maxval = 720, group = grpStyle)
 
 grpColor = "Farben"
 colCPI   = input.color(color.new(#e74c3c, 0), "CPI",  group = grpColor, inline = "c1")
@@ -45,7 +47,7 @@ f_lineStyle() =>
     lineStyleSel == "Durchgezogen" ? line.style_solid : lineStyleSel == "Gepunktet" ? line.style_dotted : line.style_dashed
 
 f_labelSize() =>
-    labelSize == "Klein" ? size.small : labelSize == "Normal" ? size.normal : labelSize == "Groß" ? size.large : size.huge
+    labelSize == "Normal" ? size.normal : labelSize == "Groß" ? size.large : size.small
 
 // Event-Typ -> Farbe
 f_color(string t) =>
@@ -280,12 +282,13 @@ if array.size(evTime) > 0
             // Fällt das Event in die aktuelle Bar?
             if ems >= barStartMs and ems < barEndMs
                 col = f_color(et)
-                // --- senkrechte Linie über die volle Höhe ---
-                ln = line.new(x1 = bar_index, y1 = high, x2 = bar_index, y2 = low, xloc = xloc.bar_index, extend = extend.both, color = col, width = lineWidth, style = f_lineStyle())
-                // --- großer Infotext-Block als Label ---
-                string deTime = f_fmtBerlin(ems)
-                string txt = et + "  ·  " + deTime + " (MEZ/MESZ)\n" + array.get(evInfo, i)
-                label.new(x = bar_index, y = high, text = txt, xloc = xloc.bar_index, yloc = yloc.price, color = col, textcolor = color.white, style = label.style_label_down, size = f_labelSize(), textalign = text.align_left)
+                // --- senkrechte Linie: semi-transparent, volle Charthoehe ---
+                line.new(x1 = bar_index, y1 = high, x2 = bar_index, y2 = low, xloc = xloc.bar_index, extend = extend.both, color = color.new(col, lineTrans), width = lineWidth, style = f_lineStyle())
+                // --- dezentes Label ÜBER den Kerzen (yloc.abovebar) ---
+                // Nur Typ + Uhrzeit MEZ, kein grosser Infoblock → Kerzen bleiben frei
+                string shortTime = str.format_time(ems, "HH:mm", "Europe/Berlin")
+                string chartTxt = et + "\n" + shortTime + " MEZ"
+                label.new(x = bar_index, y = 0, text = chartTxt, xloc = xloc.bar_index, yloc = yloc.abovebar, color = color.new(col, labelTrans), textcolor = color.white, style = label.style_label_down, size = f_labelSize(), textalign = text.align_center)
                 array.set(drawn, i, true)
 
 // =============================================================================
