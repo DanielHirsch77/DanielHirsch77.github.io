@@ -30,7 +30,7 @@ lineWidth    = input.int(1, "Linienbreite", minval = 1, maxval = 4, group = grpS
 lineTrans    = input.int(60, "Linien-Transparenz (0=voll, 90=fast unsichtbar)", minval = 0, maxval = 90, group = grpStyle)
 lineStyleSel = input.string("Gestrichelt", "Linienstil", options = ["Durchgezogen", "Gestrichelt", "Gepunktet"], group = grpStyle)
 labelSize    = input.string("Klein", "Textgröße", options = ["Klein", "Normal", "Groß"], group = grpStyle)
-labelTrans   = input.int(30, "Label-Transparenz (0=voll, 90=fast unsichtbar)", minval = 0, maxval = 90, group = grpStyle)
+labelOffset  = input.float(2.0, "Label-Abstand von Kerzen (ATR-Faktor)", minval = 0.5, maxval = 10.0, step = 0.5, group = grpStyle)
 showCountdownTbl = input.bool(true, "Tabelle: nächstes Event oben rechts", group = grpStyle)
 maxFutureDays    = input.int(120, "Nur Events der letzten/nächsten X Tage", minval = 7, maxval = 720, group = grpStyle)
 
@@ -285,9 +285,11 @@ if array.size(evTime) > 0
                 // --- senkrechte Linie: semi-transparent, volle Charthoehe ---
                 line.new(x1 = bar_index, y1 = high, x2 = bar_index, y2 = low, xloc = xloc.bar_index, extend = extend.both, color = color.new(col, lineTrans), width = lineWidth, style = f_lineStyle())
                 // --- dezentes Label ÜBER den Kerzen, kein Hintergrund ---
+                // Abstand via ATR skaliert → Kerzen werden nie verdeckt
                 string shortTime = str.format_time(ems, "HH:mm", "Europe/Berlin")
                 string chartTxt = et + " " + shortTime
-                label.new(x = bar_index, y = 0, text = chartTxt, xloc = xloc.bar_index, yloc = yloc.abovebar, color = color.new(color.black, 100), textcolor = color.new(col, 0), style = label.style_none, size = size.small)
+                float labelY = high + ta.atr(14) * labelOffset
+                label.new(x = bar_index, y = labelY, text = chartTxt, xloc = xloc.bar_index, yloc = yloc.price, color = color.new(color.black, 100), textcolor = color.new(col, 0), style = label.style_none, size = size.small)
                 array.set(drawn, i, true)
 
 // =============================================================================
