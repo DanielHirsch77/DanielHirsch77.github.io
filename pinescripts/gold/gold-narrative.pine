@@ -284,11 +284,10 @@ if array.size(evTime) > 0
                 col = f_color(et)
                 // --- senkrechte Linie: semi-transparent, volle Charthoehe ---
                 line.new(x1 = bar_index, y1 = high, x2 = bar_index, y2 = low, xloc = xloc.bar_index, extend = extend.both, color = color.new(col, lineTrans), width = lineWidth, style = f_lineStyle())
-                // --- dezentes Label ÜBER den Kerzen (yloc.abovebar) ---
-                // Nur Typ + Uhrzeit MEZ, kein grosser Infoblock → Kerzen bleiben frei
+                // --- dezentes Label ÜBER den Kerzen, kein Hintergrund ---
                 string shortTime = str.format_time(ems, "HH:mm", "Europe/Berlin")
-                string chartTxt = et + "\n" + shortTime + " MEZ"
-                label.new(x = bar_index, y = 0, text = chartTxt, xloc = xloc.bar_index, yloc = yloc.abovebar, color = color.new(col, labelTrans), textcolor = color.white, style = label.style_label_down, size = f_labelSize(), textalign = text.align_center)
+                string chartTxt = et + " " + shortTime
+                label.new(x = bar_index, y = 0, text = chartTxt, xloc = xloc.bar_index, yloc = yloc.abovebar, color = color.new(color.black, 100), textcolor = color.new(col, 0), style = label.style_none, size = size.small)
                 array.set(drawn, i, true)
 
 // =============================================================================
