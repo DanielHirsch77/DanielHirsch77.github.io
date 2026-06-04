@@ -1,16 +1,9 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0
 // @version=5
 // =============================================================================
-//  Gold Narrative - US Makro Events
-//
-//  Markiert US-Inflationsdaten und Fed-Entscheidungen im Gold-Chart:
-//    - Senkrechter Strich an jedem Event-Bar
-//    - Dezentes Label (Typ + Uhrzeit ET) oberhalb der Kerzen
-//    - Optionale Hintergrundfarbe des Event-Bars
-//
-//  Events:   CPI - PCE - FOMC - PPI - NFP
-//  Zeiten:   America/New_York (DST automatisch korrekt)
-//  Daten:    2024 - 2026  (2026 teilweise geschaetzt, BLS.gov pruefen)
+//  Gold Narrative - US Makro Events (CPI, PCE, FOMC, PPI, NFP)
+//  Senkrechter Strich + Label fuer jeden Event-Bar, keine Kerzen verdeckt.
+//  Daten: 2024-2026  (2026 teilweise geschaetzt)
 // =============================================================================
 
 indicator("Gold Narrative - US Makro Events",
@@ -19,297 +12,284 @@ indicator("Gold Narrative - US Makro Events",
      max_lines_count  = 500,
      max_labels_count = 500)
 
-// ----------------------------------------------------------------------------
-// EINSTELLUNGEN
-// ----------------------------------------------------------------------------
+// --- Inputs ------------------------------------------------------------------
 
 grp_ev = "Events einblenden"
-show_cpi  = input.bool(true,  "CPI  - Verbraucherpreise (8:30 ET)",  group = grp_ev)
-show_pce  = input.bool(true,  "PCE  - Fed Inflationsmass (8:30 ET)", group = grp_ev)
-show_fomc = input.bool(true,  "FOMC - Zinsentscheidung (14:00 ET)",  group = grp_ev)
-show_ppi  = input.bool(false, "PPI  - Erzeugerpreise (8:30 ET)",     group = grp_ev)
-show_nfp  = input.bool(false, "NFP  - Arbeitsmarkt (8:30 ET)",       group = grp_ev)
+show_cpi  = input.bool(true,  "CPI  8:30 ET",  group = grp_ev)
+show_pce  = input.bool(true,  "PCE  8:30 ET",  group = grp_ev)
+show_fomc = input.bool(true,  "FOMC 14:00 ET", group = grp_ev)
+show_ppi  = input.bool(false, "PPI  8:30 ET",  group = grp_ev)
+show_nfp  = input.bool(false, "NFP  8:30 ET",  group = grp_ev)
 
-grp_style = "Darstellung"
-line_transp = input.int(60, "Linien-Transparenz (0=voll, 95=fast unsichtbar)",
-     minval = 0, maxval = 95, step = 5, group = grp_style)
-show_bg   = input.bool(true, "Hintergrundfarbe des Event-Bars", group = grp_style)
-bg_transp = input.int(88, "Hintergrund-Transparenz",
-     minval = 70, maxval = 97, step = 1, group = grp_style)
-lbl_size_in = input.string("small", "Labelgroesse",
-     options = ["tiny", "small", "normal"], group = grp_style)
+grp_st = "Darstellung"
+ltr = input.int(60, "Linien-Transparenz", minval=0, maxval=95, group=grp_st)
+bg  = input.bool(true, "Hintergrundfarbe", group=grp_st)
+bgt = input.int(88, "Hintergrund-Transparenz", minval=70, maxval=97, group=grp_st)
+lsz = input.string("small", "Labelgroesse",
+     options=["tiny","small","normal"], group=grp_st)
 
-grp_col = "Farben"
-col_cpi  = input.color(#ff9800, "CPI",  group = grp_col, inline = "c1")
-col_pce  = input.color(#2196f3, "PCE",  group = grp_col, inline = "c2")
-col_fomc = input.color(#ef5350, "FOMC", group = grp_col, inline = "c3")
-col_ppi  = input.color(#9c27b0, "PPI",  group = grp_col, inline = "c4")
-col_nfp  = input.color(#26a69a, "NFP",  group = grp_col, inline = "c5")
+grp_c = "Farben"
+c_cpi  = input.color(#ff9800, "CPI",  group=grp_c, inline="a")
+c_pce  = input.color(#2196f3, "PCE",  group=grp_c, inline="b")
+c_fomc = input.color(#ef5350, "FOMC", group=grp_c, inline="c")
+c_ppi  = input.color(#9c27b0, "PPI",  group=grp_c, inline="d")
+c_nfp  = input.color(#26a69a, "NFP",  group=grp_c, inline="e")
 
-// ----------------------------------------------------------------------------
-// HILFSFUNKTIONEN
-// ----------------------------------------------------------------------------
+// --- Arrays (einmalig beim ersten Bar befuellt) ------------------------------
 
-lbl_sz() =>
-    switch lbl_size_in
-        "tiny"   => size.tiny
-        "normal" => size.normal
-        =>          size.small
+var int[] cpi_ts  = array.new_int(0)
+var int[] pce_ts  = array.new_int(0)
+var int[] fomc_ts = array.new_int(0)
+var int[] ppi_ts  = array.new_int(0)
+var int[] nfp_ts  = array.new_int(0)
 
-// True, wenn der aktuelle Bar den Event-Zeitstempel enthaelt.
-// Intraday: exakter Zeitvergleich. Daily+: nur Datum.
-bar_has_event(ev_ts) =>
+if barstate.isfirst
+    // CPI 2024
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  1, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  2, 13, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  3, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  4, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  5, 15, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  6, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  7, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  8, 14, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024,  9, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024, 10, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024, 11, 13, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2024, 12, 11, 8, 30))
+    // CPI 2025
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  1, 15, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  2, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  3, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  4, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  5, 13, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  6, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  7, 15, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  8, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025,  9, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025, 10, 15, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025, 11, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2025, 12, 10, 8, 30))
+    // CPI 2026
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  1, 14, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  2, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  3, 11, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  4, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  5, 13, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  6, 10, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  7, 15, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  8, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026,  9,  9, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026, 10, 14, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026, 11, 12, 8, 30))
+    array.push(cpi_ts, timestamp("America/New_York", 2026, 12,  9, 8, 30))
+
+    // PCE 2024
+    array.push(pce_ts, timestamp("America/New_York", 2024,  2, 29, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  3, 29, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  4, 26, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  5, 31, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  6, 28, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  7, 26, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  8, 30, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024,  9, 27, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024, 10, 31, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024, 11, 27, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2024, 12, 20, 8, 30))
+    // PCE 2025
+    array.push(pce_ts, timestamp("America/New_York", 2025,  1, 31, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  2, 28, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  3, 28, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  4, 30, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  5, 30, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  6, 27, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  7, 31, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  8, 29, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025,  9, 26, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025, 10, 31, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025, 11, 26, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2025, 12, 19, 8, 30))
+    // PCE 2026
+    array.push(pce_ts, timestamp("America/New_York", 2026,  1, 30, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2026,  2, 27, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2026,  3, 27, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2026,  4, 30, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2026,  5, 29, 8, 30))
+    array.push(pce_ts, timestamp("America/New_York", 2026,  6, 26, 8, 30))
+
+    // FOMC 2024
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  1, 31, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  3, 20, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  5,  1, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  6, 12, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  7, 31, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024,  9, 18, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024, 11,  7, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2024, 12, 18, 14, 0))
+    // FOMC 2025
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  1, 29, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  3, 19, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  5,  7, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  6, 18, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  7, 30, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025,  9, 17, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025, 10, 29, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2025, 12, 10, 14, 0))
+    // FOMC 2026
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  1, 28, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  3, 18, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  5,  6, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  6, 17, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  7, 29, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026,  9, 16, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026, 10, 28, 14, 0))
+    array.push(fomc_ts, timestamp("America/New_York", 2026, 12,  9, 14, 0))
+
+    // PPI 2024
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  1, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  2, 16, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  3, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  4, 11, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  5, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  6, 13, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  7, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  8, 13, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024,  9, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024, 10, 11, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024, 11, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2024, 12, 12, 8, 30))
+    // PPI 2025
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  1, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  2, 13, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  3, 13, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  4, 11, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  5, 15, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  6, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  7, 15, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  8, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025,  9, 11, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025, 10, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025, 11, 13, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2025, 12, 11, 8, 30))
+    // PPI 2026
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  1, 15, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  2, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  3, 12, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  4,  9, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  5, 14, 8, 30))
+    array.push(ppi_ts, timestamp("America/New_York", 2026,  6, 11, 8, 30))
+
+    // NFP 2024
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  1,  5, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  2,  2, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  3,  8, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  4,  5, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  5,  3, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  6,  7, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  7,  5, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  8,  2, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024,  9,  6, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024, 10,  4, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024, 11,  1, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2024, 12,  6, 8, 30))
+    // NFP 2025
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  1, 10, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  2,  7, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  3,  7, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  4,  4, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  5,  2, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  6,  6, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  7,  3, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  8,  1, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025,  9,  5, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025, 10,  3, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025, 11,  7, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2025, 12,  5, 8, 30))
+    // NFP 2026
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  1,  9, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  2,  6, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  3,  6, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  4,  3, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  5,  8, 8, 30))
+    array.push(nfp_ts, timestamp("America/New_York", 2026,  6,  5, 8, 30))
+
+// --- Hilfsfunktionen ---------------------------------------------------------
+
+f_sz() =>
+    lsz == "tiny" ? size.tiny : lsz == "normal" ? size.normal : size.small
+
+// Prueft ob der aktuelle Bar den Event-Zeitstempel enthaelt.
+// Intraday: exaktes Zeitfenster. Daily+: Tagesvergleich.
+f_match(ev_ts) =>
     if timeframe.isintraday
         time <= ev_ts and time_close > ev_ts
     else
-        year(ev_ts,       "America/New_York") == year(time,       "America/New_York") and
-        month(ev_ts,      "America/New_York") == month(time,      "America/New_York") and
-        dayofmonth(ev_ts, "America/New_York") == dayofmonth(time, "America/New_York")
+        dayofmonth(ev_ts) == dayofmonth(time) and
+        month(ev_ts)      == month(time)       and
+        year(ev_ts)       == year(time)
 
-// Senkrechter Strich (0 -> 99999, TradingView clippt auf sichtbaren Bereich)
-// + Label oberhalb der Kerze (keine Kerze wird verdeckt)
-draw_event(ev_col, lbl_txt) =>
+// Zeichnet Linie (volle Charthoehe) + Label ueber dem Bar.
+f_draw(col, txt) =>
     line.new(bar_index, 0.01, bar_index, 99999.0,
-         xloc  = xloc.bar_index,
-         color = color.new(ev_col, line_transp),
-         width = 1,
-         style = line.style_solid)
+         xloc=xloc.bar_index,
+         color=color.new(col, ltr),
+         width=1)
     label.new(bar_index, 0,
-         text      = lbl_txt,
-         xloc      = xloc.bar_index,
-         yloc      = yloc.abovebar,
-         color     = color.new(ev_col, 72),
-         textcolor = color.white,
-         style     = label.style_label_down,
-         size      = lbl_sz())
+         text=txt,
+         xloc=xloc.bar_index,
+         yloc=yloc.abovebar,
+         color=color.new(col, 72),
+         textcolor=color.white,
+         style=label.style_label_down,
+         size=f_sz())
 
-// ----------------------------------------------------------------------------
-// EVENT-TIMESTAMPS  (America/New_York)
-//   CPI / PCE / PPI / NFP : 8:30 AM ET
-//   FOMC Zinsentscheidung  : 14:00 ET
-//
-//   timestamp("America/New_York", Jahr, Monat, Tag, Stunde, Minute)
-//   -> DST wird von TradingView automatisch berechnet
-//
-//   2026: geschaetzte Daten - bitte auf BLS.gov und federalreserve.gov pruefen
-// ----------------------------------------------------------------------------
+// --- Hauptlogik --------------------------------------------------------------
 
-// -- CPI ----------------------------------------------------------------------
-var int[] cpi_ts = array.from(
-    timestamp("America/New_York", 2024,  1, 11, 8, 30),
-    timestamp("America/New_York", 2024,  2, 13, 8, 30),
-    timestamp("America/New_York", 2024,  3, 12, 8, 30),
-    timestamp("America/New_York", 2024,  4, 10, 8, 30),
-    timestamp("America/New_York", 2024,  5, 15, 8, 30),
-    timestamp("America/New_York", 2024,  6, 12, 8, 30),
-    timestamp("America/New_York", 2024,  7, 11, 8, 30),
-    timestamp("America/New_York", 2024,  8, 14, 8, 30),
-    timestamp("America/New_York", 2024,  9, 11, 8, 30),
-    timestamp("America/New_York", 2024, 10, 10, 8, 30),
-    timestamp("America/New_York", 2024, 11, 13, 8, 30),
-    timestamp("America/New_York", 2024, 12, 11, 8, 30),
-    timestamp("America/New_York", 2025,  1, 15, 8, 30),
-    timestamp("America/New_York", 2025,  2, 12, 8, 30),
-    timestamp("America/New_York", 2025,  3, 12, 8, 30),
-    timestamp("America/New_York", 2025,  4, 10, 8, 30),
-    timestamp("America/New_York", 2025,  5, 13, 8, 30),
-    timestamp("America/New_York", 2025,  6, 11, 8, 30),
-    timestamp("America/New_York", 2025,  7, 15, 8, 30),
-    timestamp("America/New_York", 2025,  8, 12, 8, 30),
-    timestamp("America/New_York", 2025,  9, 10, 8, 30),
-    timestamp("America/New_York", 2025, 10, 15, 8, 30),
-    timestamp("America/New_York", 2025, 11, 12, 8, 30),
-    timestamp("America/New_York", 2025, 12, 10, 8, 30),
-    timestamp("America/New_York", 2026,  1, 14, 8, 30),
-    timestamp("America/New_York", 2026,  2, 11, 8, 30),
-    timestamp("America/New_York", 2026,  3, 11, 8, 30),
-    timestamp("America/New_York", 2026,  4, 10, 8, 30),
-    timestamp("America/New_York", 2026,  5, 13, 8, 30),
-    timestamp("America/New_York", 2026,  6, 10, 8, 30),
-    timestamp("America/New_York", 2026,  7, 15, 8, 30),
-    timestamp("America/New_York", 2026,  8, 12, 8, 30),
-    timestamp("America/New_York", 2026,  9,  9, 8, 30),
-    timestamp("America/New_York", 2026, 10, 14, 8, 30),
-    timestamp("America/New_York", 2026, 11, 12, 8, 30),
-    timestamp("America/New_York", 2026, 12,  9, 8, 30))
+in_range = year >= 2024 and year <= 2026
 
-// -- PCE ----------------------------------------------------------------------
-var int[] pce_ts = array.from(
-    timestamp("America/New_York", 2024,  2, 29, 8, 30),
-    timestamp("America/New_York", 2024,  3, 29, 8, 30),
-    timestamp("America/New_York", 2024,  4, 26, 8, 30),
-    timestamp("America/New_York", 2024,  5, 31, 8, 30),
-    timestamp("America/New_York", 2024,  6, 28, 8, 30),
-    timestamp("America/New_York", 2024,  7, 26, 8, 30),
-    timestamp("America/New_York", 2024,  8, 30, 8, 30),
-    timestamp("America/New_York", 2024,  9, 27, 8, 30),
-    timestamp("America/New_York", 2024, 10, 31, 8, 30),
-    timestamp("America/New_York", 2024, 11, 27, 8, 30),
-    timestamp("America/New_York", 2024, 12, 20, 8, 30),
-    timestamp("America/New_York", 2025,  1, 31, 8, 30),
-    timestamp("America/New_York", 2025,  2, 28, 8, 30),
-    timestamp("America/New_York", 2025,  3, 28, 8, 30),
-    timestamp("America/New_York", 2025,  4, 30, 8, 30),
-    timestamp("America/New_York", 2025,  5, 30, 8, 30),
-    timestamp("America/New_York", 2025,  6, 27, 8, 30),
-    timestamp("America/New_York", 2025,  7, 31, 8, 30),
-    timestamp("America/New_York", 2025,  8, 29, 8, 30),
-    timestamp("America/New_York", 2025,  9, 26, 8, 30),
-    timestamp("America/New_York", 2025, 10, 31, 8, 30),
-    timestamp("America/New_York", 2025, 11, 26, 8, 30),
-    timestamp("America/New_York", 2025, 12, 19, 8, 30),
-    timestamp("America/New_York", 2026,  1, 30, 8, 30),
-    timestamp("America/New_York", 2026,  2, 27, 8, 30),
-    timestamp("America/New_York", 2026,  3, 27, 8, 30),
-    timestamp("America/New_York", 2026,  4, 30, 8, 30),
-    timestamp("America/New_York", 2026,  5, 29, 8, 30),
-    timestamp("America/New_York", 2026,  6, 26, 8, 30))
-
-// -- FOMC ---------------------------------------------------------------------
-var int[] fomc_ts = array.from(
-    timestamp("America/New_York", 2024,  1, 31, 14, 0),
-    timestamp("America/New_York", 2024,  3, 20, 14, 0),
-    timestamp("America/New_York", 2024,  5,  1, 14, 0),
-    timestamp("America/New_York", 2024,  6, 12, 14, 0),
-    timestamp("America/New_York", 2024,  7, 31, 14, 0),
-    timestamp("America/New_York", 2024,  9, 18, 14, 0),
-    timestamp("America/New_York", 2024, 11,  7, 14, 0),
-    timestamp("America/New_York", 2024, 12, 18, 14, 0),
-    timestamp("America/New_York", 2025,  1, 29, 14, 0),
-    timestamp("America/New_York", 2025,  3, 19, 14, 0),
-    timestamp("America/New_York", 2025,  5,  7, 14, 0),
-    timestamp("America/New_York", 2025,  6, 18, 14, 0),
-    timestamp("America/New_York", 2025,  7, 30, 14, 0),
-    timestamp("America/New_York", 2025,  9, 17, 14, 0),
-    timestamp("America/New_York", 2025, 10, 29, 14, 0),
-    timestamp("America/New_York", 2025, 12, 10, 14, 0),
-    timestamp("America/New_York", 2026,  1, 28, 14, 0),
-    timestamp("America/New_York", 2026,  3, 18, 14, 0),
-    timestamp("America/New_York", 2026,  5,  6, 14, 0),
-    timestamp("America/New_York", 2026,  6, 17, 14, 0),
-    timestamp("America/New_York", 2026,  7, 29, 14, 0),
-    timestamp("America/New_York", 2026,  9, 16, 14, 0),
-    timestamp("America/New_York", 2026, 10, 28, 14, 0),
-    timestamp("America/New_York", 2026, 12,  9, 14, 0))
-
-// -- PPI ----------------------------------------------------------------------
-var int[] ppi_ts = array.from(
-    timestamp("America/New_York", 2024,  1, 12, 8, 30),
-    timestamp("America/New_York", 2024,  2, 16, 8, 30),
-    timestamp("America/New_York", 2024,  3, 14, 8, 30),
-    timestamp("America/New_York", 2024,  4, 11, 8, 30),
-    timestamp("America/New_York", 2024,  5, 14, 8, 30),
-    timestamp("America/New_York", 2024,  6, 13, 8, 30),
-    timestamp("America/New_York", 2024,  7, 12, 8, 30),
-    timestamp("America/New_York", 2024,  8, 13, 8, 30),
-    timestamp("America/New_York", 2024,  9, 12, 8, 30),
-    timestamp("America/New_York", 2024, 10, 11, 8, 30),
-    timestamp("America/New_York", 2024, 11, 14, 8, 30),
-    timestamp("America/New_York", 2024, 12, 12, 8, 30),
-    timestamp("America/New_York", 2025,  1, 14, 8, 30),
-    timestamp("America/New_York", 2025,  2, 13, 8, 30),
-    timestamp("America/New_York", 2025,  3, 13, 8, 30),
-    timestamp("America/New_York", 2025,  4, 11, 8, 30),
-    timestamp("America/New_York", 2025,  5, 15, 8, 30),
-    timestamp("America/New_York", 2025,  6, 12, 8, 30),
-    timestamp("America/New_York", 2025,  7, 15, 8, 30),
-    timestamp("America/New_York", 2025,  8, 14, 8, 30),
-    timestamp("America/New_York", 2025,  9, 11, 8, 30),
-    timestamp("America/New_York", 2025, 10, 14, 8, 30),
-    timestamp("America/New_York", 2025, 11, 13, 8, 30),
-    timestamp("America/New_York", 2025, 12, 11, 8, 30),
-    timestamp("America/New_York", 2026,  1, 15, 8, 30),
-    timestamp("America/New_York", 2026,  2, 12, 8, 30),
-    timestamp("America/New_York", 2026,  3, 12, 8, 30),
-    timestamp("America/New_York", 2026,  4,  9, 8, 30),
-    timestamp("America/New_York", 2026,  5, 14, 8, 30),
-    timestamp("America/New_York", 2026,  6, 11, 8, 30))
-
-// -- NFP (erster Freitag des Monats) -----------------------------------------
-var int[] nfp_ts = array.from(
-    timestamp("America/New_York", 2024,  1,  5, 8, 30),
-    timestamp("America/New_York", 2024,  2,  2, 8, 30),
-    timestamp("America/New_York", 2024,  3,  8, 8, 30),
-    timestamp("America/New_York", 2024,  4,  5, 8, 30),
-    timestamp("America/New_York", 2024,  5,  3, 8, 30),
-    timestamp("America/New_York", 2024,  6,  7, 8, 30),
-    timestamp("America/New_York", 2024,  7,  5, 8, 30),
-    timestamp("America/New_York", 2024,  8,  2, 8, 30),
-    timestamp("America/New_York", 2024,  9,  6, 8, 30),
-    timestamp("America/New_York", 2024, 10,  4, 8, 30),
-    timestamp("America/New_York", 2024, 11,  1, 8, 30),
-    timestamp("America/New_York", 2024, 12,  6, 8, 30),
-    timestamp("America/New_York", 2025,  1, 10, 8, 30),
-    timestamp("America/New_York", 2025,  2,  7, 8, 30),
-    timestamp("America/New_York", 2025,  3,  7, 8, 30),
-    timestamp("America/New_York", 2025,  4,  4, 8, 30),
-    timestamp("America/New_York", 2025,  5,  2, 8, 30),
-    timestamp("America/New_York", 2025,  6,  6, 8, 30),
-    timestamp("America/New_York", 2025,  7,  3, 8, 30),
-    timestamp("America/New_York", 2025,  8,  1, 8, 30),
-    timestamp("America/New_York", 2025,  9,  5, 8, 30),
-    timestamp("America/New_York", 2025, 10,  3, 8, 30),
-    timestamp("America/New_York", 2025, 11,  7, 8, 30),
-    timestamp("America/New_York", 2025, 12,  5, 8, 30),
-    timestamp("America/New_York", 2026,  1,  9, 8, 30),
-    timestamp("America/New_York", 2026,  2,  6, 8, 30),
-    timestamp("America/New_York", 2026,  3,  6, 8, 30),
-    timestamp("America/New_York", 2026,  4,  3, 8, 30),
-    timestamp("America/New_York", 2026,  5,  8, 8, 30),
-    timestamp("America/New_York", 2026,  6,  5, 8, 30))
-
-// ----------------------------------------------------------------------------
-// HAUPTLOGIK
-// Jahresfilter (2024-2026) fuer Performance auf langen Historien
-// ----------------------------------------------------------------------------
-
-cur_yr   = year(time, "America/New_York")
-in_range = cur_yr >= 2024 and cur_yr <= 2026
-
-// Hintergrundfarbe (laeuft jede Bar durch damit bgcolor() korrekt feuert)
-bg_col = color(na)
-if in_range and show_bg
+// Hintergrundfarbe (laeuft jede Bar, damit bgcolor() korrekt feuert)
+var color bg_c = na
+bg_c := na
+if in_range and bg
     for i = 0 to array.size(cpi_ts) - 1
-        if show_cpi and bar_has_event(array.get(cpi_ts, i))
-            bg_col := color.new(col_cpi, bg_transp)
+        if show_cpi and f_match(array.get(cpi_ts, i))
+            bg_c := color.new(c_cpi, bgt)
     for i = 0 to array.size(pce_ts) - 1
-        if show_pce and bar_has_event(array.get(pce_ts, i))
-            bg_col := color.new(col_pce, bg_transp)
+        if show_pce and f_match(array.get(pce_ts, i))
+            bg_c := color.new(c_pce, bgt)
     for i = 0 to array.size(fomc_ts) - 1
-        if show_fomc and bar_has_event(array.get(fomc_ts, i))
-            bg_col := color.new(col_fomc, bg_transp)
+        if show_fomc and f_match(array.get(fomc_ts, i))
+            bg_c := color.new(c_fomc, bgt)
     for i = 0 to array.size(ppi_ts) - 1
-        if show_ppi and bar_has_event(array.get(ppi_ts, i))
-            bg_col := color.new(col_ppi, bg_transp)
+        if show_ppi and f_match(array.get(ppi_ts, i))
+            bg_c := color.new(c_ppi, bgt)
     for i = 0 to array.size(nfp_ts) - 1
-        if show_nfp and bar_has_event(array.get(nfp_ts, i))
-            bg_col := color.new(col_nfp, bg_transp)
+        if show_nfp and f_match(array.get(nfp_ts, i))
+            bg_c := color.new(c_nfp, bgt)
 
-bgcolor(bg_col, title = "Event Hintergrund")
+bgcolor(bg_c, title="Event Hintergrund")
 
-// Linie + Label (nur auf abgeschlossenen Bars, kein Flackern auf Live-Bar)
+// Linie + Label nur auf abgeschlossenen Bars (kein Flackern)
 if in_range and barstate.isconfirmed
     for i = 0 to array.size(cpi_ts) - 1
-        if show_cpi and bar_has_event(array.get(cpi_ts, i))
-            draw_event(col_cpi, "CPI\n8:30 ET")
+        if show_cpi and f_match(array.get(cpi_ts, i))
+            f_draw(c_cpi, "CPI\n8:30 ET")
     for i = 0 to array.size(pce_ts) - 1
-        if show_pce and bar_has_event(array.get(pce_ts, i))
-            draw_event(col_pce, "PCE\n8:30 ET")
+        if show_pce and f_match(array.get(pce_ts, i))
+            f_draw(c_pce, "PCE\n8:30 ET")
     for i = 0 to array.size(fomc_ts) - 1
-        if show_fomc and bar_has_event(array.get(fomc_ts, i))
-            draw_event(col_fomc, "FOMC\n14:00 ET")
+        if show_fomc and f_match(array.get(fomc_ts, i))
+            f_draw(c_fomc, "FOMC\n14:00 ET")
     for i = 0 to array.size(ppi_ts) - 1
-        if show_ppi and bar_has_event(array.get(ppi_ts, i))
-            draw_event(col_ppi, "PPI\n8:30 ET")
+        if show_ppi and f_match(array.get(ppi_ts, i))
+            f_draw(c_ppi, "PPI\n8:30 ET")
     for i = 0 to array.size(nfp_ts) - 1
-        if show_nfp and bar_has_event(array.get(nfp_ts, i))
-            draw_event(col_nfp, "NFP\n8:30 ET")
+        if show_nfp and f_match(array.get(nfp_ts, i))
+            f_draw(c_nfp, "NFP\n8:30 ET")
 
-// ----------------------------------------------------------------------------
-// ALERTS
-// ----------------------------------------------------------------------------
-alertcondition(show_cpi  and in_range, "CPI Event",  "Gold: CPI Veroeffentlichung - 8:30 ET")
-alertcondition(show_pce  and in_range, "PCE Event",  "Gold: PCE Veroeffentlichung - 8:30 ET")
-alertcondition(show_fomc and in_range, "FOMC Event", "Gold: FOMC Zinsentscheidung - 14:00 ET")
-alertcondition(show_ppi  and in_range, "PPI Event",  "Gold: PPI Veroeffentlichung - 8:30 ET")
-alertcondition(show_nfp  and in_range, "NFP Event",  "Gold: NFP Arbeitsmarktdaten - 8:30 ET")
+// --- Alerts ------------------------------------------------------------------
+alertcondition(show_cpi  and in_range, "CPI Event",  "Gold: CPI 8:30 ET")
+alertcondition(show_pce  and in_range, "PCE Event",  "Gold: PCE 8:30 ET")
+alertcondition(show_fomc and in_range, "FOMC Event", "Gold: FOMC 14:00 ET")
+alertcondition(show_ppi  and in_range, "PPI Event",  "Gold: PPI 8:30 ET")
+alertcondition(show_nfp  and in_range, "NFP Event",  "Gold: NFP 8:30 ET")
