@@ -1,92 +1,65 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Screening Reports</title>
   <style>
-    :root { --bg:#ffffff; --panel:#f8f9fa; --text:#131722; --muted:#6b7280; --line:#e5e7eb; --accent:#2962ff; --soft:#eff6ff; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI","Noto Sans",sans-serif; font-size:13px; }
-    .layout { display:grid; grid-template-columns:190px 1fr; min-height:100vh; }
-    .menu { background:var(--panel); border-right:1px solid var(--line); padding:12px 8px; }
-    .menu h2 { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; margin:0 0 8px 4px; }
-    .acc-hdr { display:flex; justify-content:space-between; align-items:center; width:100%; background:none; border:none; font-size:12px; font-weight:500; color:var(--text); padding:6px 8px; border-radius:4px; cursor:pointer; text-align:left; }
-    .acc-hdr:hover,.acc-hdr.open { color:var(--accent); background:var(--soft); }
-    .acc-icon { font-size:9px; margin-left:4px; transition:transform .2s; }
-    .acc-hdr.open .acc-icon { transform:rotate(180deg); }
-    .acc-body { overflow:hidden; max-height:0; transition:max-height .25s ease; }
-    .acc-body a { display:block; font-size:11px; color:#374151; text-decoration:none; padding:4px 8px 4px 18px; border-radius:3px; }
-    .acc-body a:hover { background:var(--soft); color:var(--accent); }
-    .top-link { display:block; font-size:12px; font-weight:500; color:var(--text); text-decoration:none; padding:6px 8px; border-radius:4px; margin-top:2px; }
-    .top-link:hover { background:var(--soft); color:var(--accent); }
-    .content { padding:20px 24px; background:var(--bg); }
-    h1 { margin:0; font-size:clamp(20px,2.5vw,28px); }
-    .sub { margin:6px 0 2px; color:var(--muted); font-size:13px; }
-    .version { margin:0 0 16px; color:var(--muted); font-size:11px; }
-    .list { display:grid; gap:8px; }
-    .report-link { display:flex; justify-content:space-between; gap:10px; align-items:center; text-decoration:none; border:1px solid var(--line); border-radius:6px; padding:9px 12px; color:var(--text); background:var(--panel); }
-    .report-link:hover { border-color:var(--accent); background:var(--soft); }
-    .name { font-weight:600; }
-    .meta { color:var(--muted); font-size:11px; white-space:nowrap; }
-    .empty { color:var(--muted); }
-    @media(max-width:720px) {
-      .layout { grid-template-columns:1fr; }
-      .menu { border-right:none; border-bottom:1px solid var(--line); }
-    }
+    :root{--bg:#ffffff;--panel:#f8f9fa;--text:#131722;--muted:#6b7280;--line:#e5e7eb;--accent:#2962ff;--soft:#eff6ff;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;overflow:hidden;font-family:"Segoe UI","Noto Sans",sans-serif;font-size:13px;background:var(--bg);color:var(--text);}
+    body{display:flex;}
+    .nav{width:190px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);padding:12px 8px;overflow-y:auto;height:100vh;}
+    .nav h2{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:0 0 8px 4px;}
+    .top-link{display:block;font-size:12px;font-weight:500;color:var(--text);text-decoration:none;padding:6px 8px;border-radius:4px;}
+    .top-link:hover,.top-link.active{background:var(--soft);color:var(--accent);}
+    .acc-hdr{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;font-size:12px;font-weight:500;color:var(--text);padding:6px 8px;border-radius:4px;cursor:pointer;margin-top:2px;}
+    .acc-hdr:hover,.acc-hdr.open{color:var(--accent);background:var(--soft);}
+    .acc-icon{font-size:9px;margin-left:4px;transition:transform .2s;}
+    .acc-hdr.open .acc-icon{transform:rotate(180deg);}
+    .acc-body{overflow:hidden;max-height:0;transition:max-height .25s;}
+    .acc-body a{display:block;font-size:11px;color:#374151;text-decoration:none;padding:4px 8px 4px 18px;border-radius:3px;}
+    .acc-body a:hover,.acc-body a.active{background:var(--soft);color:var(--accent);}
+    .frame{flex:1;border:none;height:100vh;min-width:0;}
   </style>
 </head>
 <body>
-  <main class="layout">
-    <aside class="menu">
-      <h2>Navigation</h2>
-      <div>
-        <button class="acc-hdr" onclick="toggleAcc(this)">
-          <span>Screening</span><span class="acc-icon">&#9660;</span>
-        </button>
-        <div class="acc-body">
-          <a href="/screening/ema200-long-bounce.html">Ema200 Long Bounce</a>
-<a href="/screening/false-breakout-long.html">False Breakout Long</a>
-<a href="/screening/gold-chart.html">Gold Chart</a>
-<a href="/screening/gold.html">Gold</a>
-<a href="/screening/news-false-breakout-ema200.html">News False Breakout Ema200</a>
-<a href="/screening/news-tv.html">News Tv</a>
-<a href="/screening/recent-news-tv.html">Recent News Tv</a>
-<a href="/screening/us-stock-momentum-nasdaq-100.html">Us Stock Momentum Nasdaq 100</a>
-<a href="/screening/us-stock-momentum-sp500.html">Us Stock Momentum Sp500</a>
-<a href="/screening/us-stock-momentum.html">Us Stock Momentum</a>
-        </div>
-      </div>
-      <a class="top-link" href="/pre-market/">Premarket Prep</a>
-    </aside>
-    <section id="screening" class="content">
-      <h1>Screening Reports</h1>
-      <p class="sub">Klicke einen Screener, um die Detail-HTML zu oeffnen.</p>
-      <p class="version">Version: 20260617-203634 | Generated: 2026-06-17 20:36:34</p>
-      <div class="list">
-        <a class="report-link" href="screening/ema200-long-bounce.html"><span class="name">Ema200 Long Bounce</span><span class="meta">2026-06-17 20:34:50</span></a>
-<a class="report-link" href="screening/false-breakout-long.html"><span class="name">False Breakout Long</span><span class="meta">2026-06-17 20:25:45</span></a>
-<a class="report-link" href="screening/gold-chart.html"><span class="name">Gold Chart</span><span class="meta">2026-06-02 22:39:58</span></a>
-<a class="report-link" href="screening/gold.html"><span class="name">Gold</span><span class="meta">2026-06-17 21:30:13</span></a>
-<a class="report-link" href="screening/news-false-breakout-ema200.html"><span class="name">News False Breakout Ema200</span><span class="meta">2026-06-17 20:26:38</span></a>
-<a class="report-link" href="screening/news-tv.html"><span class="name">News Tv</span><span class="meta">2026-06-17 20:18:30</span></a>
-<a class="report-link" href="screening/recent-news-tv.html"><span class="name">Recent News Tv</span><span class="meta">2026-06-17 20:20:32</span></a>
-<a class="report-link" href="screening/us-stock-momentum-nasdaq-100.html"><span class="name">Us Stock Momentum Nasdaq 100</span><span class="meta">2026-06-17 20:36:15</span></a>
-<a class="report-link" href="screening/us-stock-momentum-sp500.html"><span class="name">Us Stock Momentum Sp500</span><span class="meta">2026-06-17 20:28:48</span></a>
-<a class="report-link" href="screening/us-stock-momentum.html"><span class="name">Us Stock Momentum</span><span class="meta">2026-06-17 20:36:15</span></a>
-      </div>
-    </section>
-  </main>
+  <nav class="nav">
+    <h2>Navigation</h2>
+    <a class="top-link" href="/pre-market/" target="content">Market Prep</a>
+    <button class="acc-hdr" onclick="toggleAcc(this)"><span>Screening</span><span class="acc-icon">&#9660;</span></button>
+    <div class="acc-body"><a href="/screening/ema200-long-bounce.html" target="content">Ema200 Long Bounce</a>
+<a href="/screening/false-breakout-long.html" target="content">False Breakout Long</a>
+<a href="/screening/gold-chart.html" target="content">Gold Chart</a>
+<a href="/screening/gold.html" target="content">Gold</a>
+<a href="/screening/news-false-breakout-ema200.html" target="content">News False Breakout Ema200</a>
+<a href="/screening/news-tv.html" target="content">News Tv</a>
+<a href="/screening/recent-news-tv.html" target="content">Recent News Tv</a>
+<a href="/screening/us-stock-momentum-nasdaq-100.html" target="content">Us Stock Momentum Nasdaq 100</a>
+<a href="/screening/us-stock-momentum-sp500.html" target="content">Us Stock Momentum Sp500</a>
+<a href="/screening/us-stock-momentum.html" target="content">Us Stock Momentum</a></div>
+  </nav>
+  <iframe name="content" class="frame" src="/pre-market/" onload="updateActive(this)"></iframe>
   <script>
-    function toggleAcc(btn) {
-      var body = btn.nextElementSibling;
-      var open = btn.classList.toggle('open');
-      body.style.maxHeight = open ? body.scrollHeight + 'px' : '0';
+    function toggleAcc(btn){
+      var body=btn.nextElementSibling;
+      var open=btn.classList.toggle('open');
+      body.style.maxHeight=open?body.scrollHeight+'px':'0';
     }
-    document.querySelectorAll('.acc-hdr').forEach(function(btn) {
+    document.querySelectorAll('.acc-hdr').forEach(function(btn){
       btn.classList.add('open');
-      btn.nextElementSibling.style.maxHeight = btn.nextElementSibling.scrollHeight + 'px';
+      btn.nextElementSibling.style.maxHeight=btn.nextElementSibling.scrollHeight+'px';
     });
+    function updateActive(frame){
+      try{
+        var path=frame.contentWindow.location.pathname;
+        document.querySelectorAll('a[target="content"]').forEach(function(a){
+          a.classList.remove('active');
+          var href=a.getAttribute('href');
+          if(path===href||path.startsWith(href.replace(/[/]$/,'')+'/'))a.classList.add('active');
+        });
+      }catch(e){}
+    }
   </script>
 </body>
 </html>
