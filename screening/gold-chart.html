@@ -8,50 +8,50 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #131722; color: #d1d4dc;
+    background: #ffffff; color: #131722;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     display: flex; height: 100vh; overflow: hidden;
   }
   #sidebar {
-    width: 130px; background: #1e222d; border-right: 1px solid #2a2e39;
+    width: 130px; background: #f0f3fa; border-right: 1px solid #d1d4dc;
     display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
   }
   #sidebar h2 {
     font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
-    color: #787b86; padding: 14px 12px 8px; border-bottom: 1px solid #2a2e39;
+    color: #555f6d; padding: 14px 12px 8px; border-bottom: 1px solid #d1d4dc;
   }
   .tbtn {
     display: block; width: 100%; padding: 10px 14px; font-size: 13px; font-weight: 600;
-    text-align: left; background: transparent; color: #d1d4dc; border: none;
-    border-bottom: 1px solid #2a2e39; cursor: pointer; transition: background .1s;
+    text-align: left; background: transparent; color: #374151; border: none;
+    border-bottom: 1px solid #d1d4dc; cursor: pointer; transition: background .1s;
   }
-  .tbtn:hover { background: #2a2e39; }
-  .tbtn.active { background: #1f2d5c; color: #5b9cf6; border-left: 3px solid #2962ff; }
-  .tbtn-sep { height: 1px; background: #434651; margin: 4px 0; }
+  .tbtn:hover { background: #e8eeff; }
+  .tbtn.active { background: #dbeafe; color: #2962ff; border-left: 3px solid #2962ff; }
+  .tbtn-sep { height: 1px; background: #d1d4dc; margin: 4px 0; }
   #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
   #hdr {
     padding: 8px 16px; font-size: 14px; font-weight: 700;
-    border-bottom: 1px solid #2a2e39; background: #1e222d;
+    border-bottom: 1px solid #e0e3eb; background: #f8f9fc;
     display: flex; align-items: center; gap: 12px; flex-shrink: 0;
   }
-  #hdr .sub { font-size: 11px; font-weight: 400; color: #787b86; }
+  #hdr .sub { font-size: 11px; font-weight: 400; color: #666; }
   #chart { flex: 1; min-height: 0; }
   #smc-panel {
     flex: 1; display: none; padding: 20px 24px; overflow-y: auto;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 12px; line-height: 1.7; color: #d1d4dc; white-space: pre;
+    font-size: 12px; line-height: 1.7; color: #131722; white-space: pre;
     min-height: 0;
   }
   .legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 16px;
-             border-bottom: 1px solid #2a2e39; flex-shrink: 0; font-size: 11px; }
+             border-bottom: 1px solid #e0e3eb; flex-shrink: 0; font-size: 11px; }
   .pill { padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-  .pill-bull-ob  { background: rgba(38,166,154,.25);  color: #26a69a; }
-  .pill-bear-ob  { background: rgba(239,83,80,.25);   color: #ef5350; }
-  .pill-bull-fvg { background: rgba(0,188,212,.2);    color: #00bcd4; }
-  .pill-bear-fvg { background: rgba(255,152,0,.2);    color: #ff9800; }
-  .pill-bos      { background: rgba(89,145,250,.2);   color: #5b9cf6; }
-  .pill-choch    { background: rgba(156,204,200,.2);  color: #80cbc4; }
-  .pill-liq      { background: rgba(180,180,180,.15); color: #aaa; }
+  .pill-bull-ob  { background: rgba(38,166,154,.18);  color: #1a7a6e; }
+  .pill-bear-ob  { background: rgba(239,83,80,.15);   color: #c0392b; }
+  .pill-bull-fvg { background: rgba(0,150,180,.12);   color: #0077a0; }
+  .pill-bear-fvg { background: rgba(200,100,0,.12);   color: #a05000; }
+  .pill-bos      { background: rgba(30,90,200,.12);   color: #1e5ac8; }
+  .pill-choch    { background: rgba(0,130,120,.12);   color: #007870; }
+  .pill-liq      { background: rgba(100,100,100,.10); color: #555; }
 </style>
 </head>
 <body>
@@ -240,7 +240,7 @@ function showChart(tf) {
       x:lastDate, y:b.level, xref:'x', yref:'y',
       text:(b.dir===1?'BOS ↑':'BOS ↓') + ' ' + b.level.toFixed(0),
       showarrow:false, font:{color:col, size:9},
-      xanchor:'right', yanchor:'bottom', bgcolor:'rgba(19,23,34,0.7)',
+      xanchor:'right', yanchor:'bottom', bgcolor:'rgba(255,255,255,0.85)',
     });
   });
 
@@ -255,7 +255,7 @@ function showChart(tf) {
       x:lastDate, y:c.level, xref:'x', yref:'y',
       text:(c.dir===1?'CHoCH ↑':'CHoCH ↓') + ' ' + c.level.toFixed(0),
       showarrow:false, font:{color:col, size:9},
-      xanchor:'right', yanchor:'top', bgcolor:'rgba(19,23,34,0.7)',
+      xanchor:'right', yanchor:'top', bgcolor:'rgba(255,255,255,0.85)',
     });
   });
 
@@ -269,7 +269,7 @@ function showChart(tf) {
       x:lastDate, y:l.level, xref:'x', yref:'y',
       text:'BSL ' + l.level.toFixed(0), showarrow:false,
       font:{color:'rgba(38,166,154,0.8)', size:9},
-      xanchor:'right', yanchor:'top', bgcolor:'rgba(19,23,34,0.7)',
+      xanchor:'right', yanchor:'top', bgcolor:'rgba(255,255,255,0.85)',
     });
   });
 
@@ -283,7 +283,7 @@ function showChart(tf) {
       x:lastDate, y:l.level, xref:'x', yref:'y',
       text:'SSL ' + l.level.toFixed(0), showarrow:false,
       font:{color:'rgba(239,83,80,0.8)', size:9},
-      xanchor:'right', yanchor:'bottom', bgcolor:'rgba(19,23,34,0.7)',
+      xanchor:'right', yanchor:'bottom', bgcolor:'rgba(255,255,255,0.85)',
     });
   });
 
@@ -312,24 +312,24 @@ function showChart(tf) {
   }
 
   const layout = {
-    paper_bgcolor: '#131722', plot_bgcolor: '#131722',
-    font: { color: '#d1d4dc', size: 11 },
+    paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff',
+    font: { color: '#131722', size: 11 },
     margin: { l: 8, r: 80, t: 8, b: 28 },
     shapes: shapes,
     annotations: annotations,
     legend: {
-      bgcolor: '#1e222d', bordercolor: '#2a2e39', borderwidth: 1,
+      bgcolor: '#f8f9fc', bordercolor: '#d1d4dc', borderwidth: 1,
       font: { size: 10 }, x: 0, y: 1, xanchor: 'left', yanchor: 'top',
     },
     xaxis: {
       rangeslider: { visible: false },
-      showgrid: true, gridcolor: '#1e222d', gridwidth: 1,
+      showgrid: true, gridcolor: '#e0e3eb', gridwidth: 1,
       type: 'category',
       tickvals: tickVals, ticktext: tickText, tickangle: 0,
       zeroline: false,
     },
     yaxis: {
-      showgrid: true, gridcolor: '#1e222d', gridwidth: 1,
+      showgrid: true, gridcolor: '#e0e3eb', gridwidth: 1,
       side: 'right', domain: [0.28, 1.0],
       zeroline: false,
     },
