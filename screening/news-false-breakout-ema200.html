@@ -27,7 +27,6 @@
     <button id="tab1" class="tab" onclick="show(1)">Recent News</button>
     <button id="tab2" class="tab" onclick="show(2)">False Breakout</button>
     <button id="tab3" class="tab" onclick="show(3)">EMA200 Bounce</button>
-
 <button id="theme-btn" onclick="toggleTheme()">Dark</button>
 </div>
   <iframe id="fr0" src="news-tv.html" ></iframe>
@@ -39,8 +38,6 @@ function show(n) {
   document.querySelectorAll('.tab').forEach((b,i) => b.classList.toggle('active', i===n));
   document.querySelectorAll('iframe').forEach((f,i) => f.style.display = i===n ? '' : 'none');
 }
-</script>
-<script>
 function _applyTheme(dark){
   document.body.classList.toggle('dark',dark);
   var btn=document.getElementById('theme-btn');if(btn)btn.textContent=dark?'Light':'Dark';
