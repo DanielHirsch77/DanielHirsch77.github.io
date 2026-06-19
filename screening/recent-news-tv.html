@@ -32,6 +32,24 @@
   #chart-d1, #chart-h1 { flex: 1; min-height: 330px; }
   #summary-panel { flex: 1; display: none; background: #ffffff; padding: 20px 24px; overflow-y: auto; font-family: 'Consolas','Monaco','Courier New',monospace; font-size: 12px; line-height: 1.7; color: #131722; white-space: pre; }
   @media (max-width: 1100px) { #charts-row { display: flex; flex-direction: column; } }
+  body.dark { background: #131722; color: #d1d4dc; }
+  body.dark #sidebar { background: #1e222d; border-right-color: #2a2e39; }
+  body.dark #sidebar h2 { color: #787b86; border-bottom-color: #2a2e39; }
+  body.dark .tbtn { color: #d1d4dc; border-bottom-color: #2a2e39; }
+  body.dark .tbtn:hover { background: #2a2e39; }
+  body.dark .tbtn.active { background: #1f2d5c; color: #5b9cf6; }
+  body.dark .tbtn-sep { background: #434651; }
+  body.dark #hdr { background: #1e222d; border-bottom-color: #2a2e39; }
+  body.dark #hdr .sub { color: #787b86; }
+  body.dark #info-bar { background: #1e222d; border-bottom-color: #2a2e39; }
+  body.dark .ib-name, body.dark .ib-val { color: #d1d4dc; }
+  body.dark .ib-sep { color: #434651; }
+  body.dark #charts-row { background: #0d1117; }
+  body.dark .chart-pane { background: #131722; border-color: #2a2e39; }
+  body.dark .pane-title { color: #787b86; background: #1e222d; border-bottom-color: #2a2e39; }
+  body.dark #summary-panel { background: #131722; color: #d1d4dc; }
+  #theme-btn { margin-left: auto; padding: 3px 10px; font-size: 11px; border: 1px solid #d1d4dc; border-radius: 4px; background: transparent; cursor: pointer; color: inherit; }
+  body.dark #theme-btn { border-color: #434651; }
 </style>
 </head>
 <body>
@@ -39,7 +57,7 @@
   <h2>Recent News Gap Candidates</h2>
 </div>
 <div id="main">
-  <div id="hdr"><span id="chart-label">-</span><span class="sub">D1 + H1(Pre/Post)</span><span class="sub">2026-06-18</span></div>
+  <div id="hdr"><span id="chart-label">-</span><span class="sub">D1 + H1(Pre/Post)</span><span class="sub">2026-06-18</span><button id="theme-btn" onclick="toggleTheme()">Dark</button></div>
   <div id="info-bar"></div>
   <div id="charts-row">
     <div class="chart-pane chart-pane-d1"><div class="pane-title">D1 - 2 Weeks Around Gap</div><div id="chart-d1"></div></div>
@@ -267,6 +285,17 @@ function showCharts(ticker) {
   Plotly.react('chart-h1', h1Traces, h1Layout, { responsive:true, displayModeBar:false });
 }
 if (TICKERS.length > 0) showCharts(TICKERS[0]);
+</script>
+<script>
+const _DL={paper_bgcolor:'#131722',plot_bgcolor:'#131722','font.color':'#d1d4dc','xaxis.gridcolor':'#1e222d','yaxis.gridcolor':'#1e222d'};
+const _LL={paper_bgcolor:'#ffffff',plot_bgcolor:'#ffffff','font.color':'#131722','xaxis.gridcolor':'#e0e3eb','yaxis.gridcolor':'#e0e3eb'};
+function _applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  var btn=document.getElementById('theme-btn');if(btn)btn.textContent=dark?'Light':'Dark';
+  ['chart-d1','chart-h1'].forEach(function(id){var el=document.getElementById(id);if(el&&el.data)Plotly.relayout(id,dark?_DL:_LL);});
+}
+function toggleTheme(){var dark=!document.body.classList.contains('dark');localStorage.theme=dark?'dark':'light';_applyTheme(dark);}
+requestAnimationFrame(function(){if(localStorage.theme==='dark')_applyTheme(true);});
 </script>
 </body>
 </html>

@@ -12,11 +12,20 @@
   .tab:hover { color: #131722; }
   .tab.active { color: #131722; border-bottom-color: #2962ff; }
   iframe { flex: 1; border: none; width: 100%; }
+  body.dark { background: #131722; color: #d1d4dc; }
+  body.dark #tab-bar { background: #1e222d; border-bottom-color: #2a2e39; }
+  body.dark .tab { color: #787b86; }
+  body.dark .tab:hover { color: #d1d4dc; }
+  body.dark .tab.active { color: #d1d4dc; border-bottom-color: #5b9cf6; }
+  #theme-btn { margin-left: auto; padding: 3px 10px; font-size: 11px; border: 1px solid #d1d4dc; border-radius: 4px; background: transparent; cursor: pointer; color: inherit; }
+  body.dark #theme-btn { border-color: #434651; }
 </style>
 </head>
 <body>
 <div id="tab-bar">
     <button id="tab0" class="tab active" onclick="show(0)">Nasdaq-100</button>
+
+<button id="theme-btn" onclick="toggleTheme()">Dark</button>
 </div>
   <iframe id="fr0" src="us-stock-momentum-nasdaq-100.html" ></iframe>
 <script>
@@ -24,6 +33,14 @@ function show(n) {
   document.querySelectorAll('.tab').forEach((b,i) => b.classList.toggle('active', i===n));
   document.querySelectorAll('iframe').forEach((f,i) => f.style.display = i===n ? '' : 'none');
 }
+</script>
+<script>
+function _applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  var btn=document.getElementById('theme-btn');if(btn)btn.textContent=dark?'Light':'Dark';
+}
+function toggleTheme(){var dark=!document.body.classList.contains('dark');localStorage.theme=dark?'dark':'light';_applyTheme(dark);}
+if(localStorage.theme==='dark')_applyTheme(true);
 </script>
 </body>
 </html>
