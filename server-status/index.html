@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Trading Server Status</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/status.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Live trading infrastructure</p>
+        <h1>Server Status</h1>
+        <p class="lede">A lightweight dashboard for the Linux trading box, refreshed from a 5-minute JSON snapshot.</p>
+      </div>
+      <div class="hero-meta">
+        <div class="pill" id="overall-pill">Loading</div>
+        <div class="stamp">
+          <span class="label">Last update</span>
+          <strong id="updated-at">--</strong>
+        </div>
+        <div class="stamp">
+          <span class="label">Next refresh</span>
+          <strong id="refresh-in">--</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary-grid" id="summary-grid">
+      <article class="summary-card">
+        <span class="label">IB Gateway</span>
+        <strong id="ib-gateway-state">--</strong>
+        <p id="ib-gateway-detail">Checking port 4002.</p>
+      </article>
+      <article class="summary-card">
+        <span class="label">Health monitor</span>
+        <strong id="health-monitor-state">--</strong>
+        <p id="health-monitor-detail">Checking watchdog.</p>
+      </article>
+      <article class="summary-card">
+        <span class="label">Signal runner</span>
+        <strong id="signal-runner-state">--</strong>
+        <p id="signal-runner-detail">Checking Day_Trading bundle.</p>
+      </article>
+      <article class="summary-card">
+        <span class="label">Day Trading</span>
+        <strong id="day-trading-state">--</strong>
+        <p id="day-trading-detail">Counting running daemons.</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Services</p>
+          <h2>Day Trading daemons</h2>
+        </div>
+        <div class="subtle" id="service-count">--</div>
+      </div>
+      <div class="service-list" id="service-list"></div>
+    </section>
+
+    <section class="panel split">
+      <div>
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transport</p>
+            <h2>Connectivity</h2>
+          </div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <span class="label">IB Port</span>
+            <strong id="ib-port-state">--</strong>
+            <p id="ib-port-detail">127.0.0.1:4002</p>
+          </div>
+          <div class="mini-card">
+            <span class="label">Queue relay</span>
+            <strong id="aggregator-state">--</strong>
+            <p id="aggregator-detail">signal-aggregator.py</p>
+          </div>
+          <div class="mini-card">
+            <span class="label">Disabled</span>
+            <strong id="disabled-state">--</strong>
+            <p id="disabled-detail">Intentionally paused services</p>
+          </div>
+        </div>
+      </div>
+      <div class="log-card">
+        <p class="eyebrow">Snapshot</p>
+        <pre id="snapshot-json">{}</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/status.js" type="module"></script>
+</body>
+</html>
