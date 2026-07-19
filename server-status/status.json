@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-19T23:10:02+02:00",
+  "generated_at": "2026-07-19T23:15:03+02:00",
   "health_monitor": {
     "pid": 2457589,
     "running": true
@@ -23,73 +23,73 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": null,
-      "running": false
+      "pid": 2458852,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": null,
-      "running": false
+      "pid": 2458853,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": null,
-      "running": false
+      "pid": 2458854,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "reversal-candle",
-      "pid": null,
-      "running": false
+      "pid": 2458855,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": null,
-      "running": false
+      "pid": 2458856,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": null,
-      "running": false
+      "pid": 2458857,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": null,
-      "running": false
+      "pid": 2458858,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vix-leading-indicator",
-      "pid": null,
-      "running": false
+      "pid": 2458860,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": null,
-      "running": false
+      "pid": 2458861,
+      "running": true
     }
   ],
   "signal_aggregator": {
-    "pid": 2151830,
-    "running": true
+    "pid": null,
+    "running": false
   },
   "summary": {
     "disabled": 0,
     "enabled": 10,
-    "running": 0
+    "running": 9
   }
 }
