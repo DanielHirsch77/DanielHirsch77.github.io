@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-20T23:15:02+02:00",
+  "generated_at": "2026-07-20T23:20:02+02:00",
   "health_monitor": {
     "pid": 2739828,
     "running": true
@@ -16,75 +16,75 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 2579036,
+      "pid": 2742263,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": 2579037,
+      "pid": 2742264,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 2579165,
+      "pid": 2742363,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 2579039,
+      "pid": 2742266,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "reversal-candle",
-      "pid": 2579040,
+      "pid": 2742267,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 2579041,
+      "pid": 2742268,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 2579042,
+      "pid": 2742269,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": 2579043,
+      "pid": 2742270,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vix-leading-indicator",
-      "pid": 2579044,
+      "pid": 2742271,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 2579045,
+      "pid": 2742272,
       "running": true
     }
   ],
   "signal_aggregator": {
-    "pid": 2458835,
+    "pid": 2742246,
     "running": true
   },
   "summary": {
