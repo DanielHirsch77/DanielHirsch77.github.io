@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-21T23:05:01+02:00",
+  "generated_at": "2026-07-21T23:10:02+02:00",
   "health_monitor": {
     "pid": 2972809,
     "running": true
@@ -10,21 +10,21 @@
     "port": 4002,
     "reachable": true
   },
-  "overall": "green",
+  "overall": "amber",
   "services": [
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 2579036,
+      "pid": 2744114,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": 2744115,
-      "running": true
+      "pid": null,
+      "running": false
     },
     {
       "detail": "Enabled",
@@ -65,8 +65,8 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": 2742270,
-      "running": true
+      "pid": null,
+      "running": false
     },
     {
       "detail": "Enabled",
@@ -90,6 +90,6 @@
   "summary": {
     "disabled": 0,
     "enabled": 10,
-    "running": 10
+    "running": 8
   }
 }
