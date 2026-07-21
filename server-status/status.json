@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-21T23:15:02+02:00",
+  "generated_at": "2026-07-21T23:20:01+02:00",
   "health_monitor": {
     "pid": 2972809,
     "running": true
@@ -30,35 +30,35 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 2974652,
+      "pid": 2976939,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 2974624,
+      "pid": 2976846,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "reversal-candle",
-      "pid": 2974603,
+      "pid": 2976847,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 2974605,
+      "pid": 2976848,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 2974616,
+      "pid": 2976849,
       "running": true
     },
     {
@@ -79,12 +79,12 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 2974609,
+      "pid": 2976852,
       "running": true
     }
   ],
   "signal_aggregator": {
-    "pid": 2742246,
+    "pid": 2976828,
     "running": true
   },
   "summary": {
