@@ -1,8 +1,8 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-21T23:00:01+02:00",
+  "generated_at": "2026-07-21T23:05:01+02:00",
   "health_monitor": {
-    "pid": 2739828,
+    "pid": 2972809,
     "running": true
   },
   "ib_gateway": {
@@ -30,35 +30,35 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 2744174,
+      "pid": 2974652,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 2744117,
+      "pid": 2974624,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "reversal-candle",
-      "pid": 2744118,
+      "pid": 2974603,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 2744119,
+      "pid": 2974605,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 2744120,
+      "pid": 2974616,
       "running": true
     },
     {
@@ -79,7 +79,7 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 2744122,
+      "pid": 2974609,
       "running": true
     }
   ],
