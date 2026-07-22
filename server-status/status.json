@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-22T23:10:01+02:00",
+  "generated_at": "2026-07-22T23:15:03+02:00",
   "health_monitor": {
     "pid": 3386274,
     "running": true
@@ -16,80 +16,80 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 2976842,
+      "pid": 3391002,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": 2976843,
+      "pid": 3391004,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": null,
-      "running": false
+      "pid": 3391005,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 2976846,
+      "pid": 3391006,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "reversal-candle",
-      "pid": 2976847,
+      "pid": 3391007,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 2976848,
+      "pid": 3391008,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 2976849,
+      "pid": 3391009,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": null,
-      "running": false
+      "pid": 3391010,
+      "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vix-leading-indicator",
-      "pid": 2976851,
+      "pid": 3391011,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 2976852,
+      "pid": 3391012,
       "running": true
     }
   ],
   "signal_aggregator": {
-    "pid": 3334855,
-    "running": true
+    "pid": null,
+    "running": false
   },
   "summary": {
     "disabled": 0,
     "enabled": 10,
-    "running": 8
+    "running": 10
   }
 }
