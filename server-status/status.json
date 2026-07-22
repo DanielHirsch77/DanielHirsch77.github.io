@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-22T23:05:01+02:00",
+  "generated_at": "2026-07-22T23:10:01+02:00",
   "health_monitor": {
     "pid": 3386274,
     "running": true
@@ -10,13 +10,13 @@
     "port": 4002,
     "reachable": true
   },
-  "overall": "green",
+  "overall": "amber",
   "services": [
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 2974630,
+      "pid": 2976842,
       "running": true
     },
     {
@@ -30,8 +30,8 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 2976939,
-      "running": true
+      "pid": null,
+      "running": false
     },
     {
       "detail": "Enabled",
@@ -65,8 +65,8 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": 2976850,
-      "running": true
+      "pid": null,
+      "running": false
     },
     {
       "detail": "Enabled",
@@ -90,6 +90,6 @@
   "summary": {
     "disabled": 0,
     "enabled": 10,
-    "running": 10
+    "running": 8
   }
 }
