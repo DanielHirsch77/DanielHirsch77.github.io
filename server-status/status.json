@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-23T15:50:01+02:00",
+  "generated_at": "2026-07-23T15:55:01+02:00",
   "health_monitor": {
     "pid": 3386274,
     "running": true
@@ -16,75 +16,75 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 3391002,
+      "pid": 3732140,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": 3391004,
+      "pid": 3732141,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 3391110,
+      "pid": 3732221,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 3391006,
+      "pid": 3732143,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "candlestick-reversal",
-      "pid": 3651061,
+      "pid": 3732144,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 3391008,
+      "pid": 3732145,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 3391009,
+      "pid": 3732146,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": 3391010,
+      "pid": 3732147,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vix-leading-indicator",
-      "pid": 3391011,
+      "pid": 3732148,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 3391012,
+      "pid": 3732149,
       "running": true
     }
   ],
   "signal_aggregator": {
-    "pid": 3390989,
+    "pid": 3732317,
     "running": true
   },
   "summary": {
