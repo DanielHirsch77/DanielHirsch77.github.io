@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-23T12:05:02+02:00",
+  "generated_at": "2026-07-23T12:10:01+02:00",
   "health_monitor": {
     "pid": 3386274,
     "running": true
@@ -43,8 +43,8 @@
     {
       "detail": "Enabled",
       "enabled": true,
-      "name": "reversal-candle",
-      "pid": 3391007,
+      "name": "candlestick-reversal",
+      "pid": 3651061,
       "running": true
     },
     {
