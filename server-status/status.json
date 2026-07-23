@@ -1,6 +1,6 @@
 {
   "disabled_services": [],
-  "generated_at": "2026-07-23T21:35:02+02:00",
+  "generated_at": "2026-07-23T21:40:01+02:00",
   "health_monitor": {
     "pid": 3386274,
     "running": true
@@ -16,70 +16,70 @@
       "detail": "Enabled",
       "enabled": true,
       "name": "15m-touches-ema50",
-      "pid": 3391002,
+      "pid": 3851733,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "current-and-prior-day-ohlc-levels",
-      "pid": 3732141,
+      "pid": 3851734,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "gold-signals",
-      "pid": 3732221,
+      "pid": 3851819,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "metals",
-      "pid": 3732143,
+      "pid": 3851736,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "candlestick-reversal",
-      "pid": 3834874,
+      "pid": 3851737,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "rsi-reversal",
-      "pid": 3732145,
+      "pid": 3851738,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "russell-signals",
-      "pid": 3732146,
+      "pid": 3851739,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "strong-stock-momentum",
-      "pid": 3732147,
+      "pid": 3851740,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vix-leading-indicator",
-      "pid": 3732148,
+      "pid": 3851741,
       "running": true
     },
     {
       "detail": "Enabled",
       "enabled": true,
       "name": "vx-signals",
-      "pid": 3732149,
+      "pid": 3851742,
       "running": true
     }
   ],
